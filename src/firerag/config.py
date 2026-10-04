@@ -79,6 +79,4 @@ def get_settings() -> Settings:
     return Settings()
 
 
-ABSTAIN_MESSAGE = (
-    "Insufficient evidence in the indexed guidance; refer to a competent fire engineer."
-)
+ABSTAIN_MESSAGE = "Insufficient evidence in the indexed guidance; refer to a competent fire engineer."

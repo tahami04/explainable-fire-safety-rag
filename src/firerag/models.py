@@ -17,9 +17,7 @@ class Chunk(BaseModel):
     requirement: str = Field(description="B1–B5, 'Reg38', 'Appendix' or 'General'.")
     section_title: str
     subsection: str | None = None
-    paragraph_ref: str | None = Field(
-        default=None, description="Paragraph number as printed, e.g. '2.5' or 'B6'."
-    )
+    paragraph_ref: str | None = Field(default=None, description="Paragraph number as printed, e.g. '2.5' or 'B6'.")
     kind: ChunkKind = "paragraph"
     page: int | None = Field(default=None, description="Printed page number.")
     pdf_page: int = Field(description="1-based page index in the PDF file.")

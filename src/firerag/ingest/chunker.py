@@ -73,13 +73,11 @@ class _State:
 def _join(lines: list[Line], kind: ChunkKind) -> str:
     """Join lines into readable text, keeping list items on their own line."""
     if kind in ("table", "diagram"):
-        return normalise_whitespace("\n".join(l.text for l in lines))
+        return normalise_whitespace("\n".join(ln.text for ln in lines))
     out: list[str] = []
     for ln in lines:
         if not out or _LIST_ITEM.match(ln.text):
             out.append(ln.text)
-        elif re.fullmatch(r"(?:[a-z]|[ivx]{1,4})\.", out[-1].split("\n")[-1]):
-            out[-1] = out[-1] + " " + ln.text
         else:
             out[-1] = out[-1] + " " + ln.text
     return normalise_whitespace("\n".join(out))
@@ -175,8 +173,9 @@ def chunk_volume(pdf_path: Path, volume: int) -> list[Chunk]:
                 st.last_minor = minor
                 current = new_draft("paragraph", f"{para.group(1)}.{para.group(2)}")
                 if para.group(3):
-                    current.lines.append(Line(para.group(3), ln.pdf_page, ln.printed_page,
-                                              ln.is_bold, ln.font_size, ln.effective_note))
+                    current.lines.append(
+                        Line(para.group(3), ln.pdf_page, ln.printed_page, ln.is_bold, ln.font_size, ln.effective_note)
+                    )
                 continue
         app = _APP_NUM.match(text)
         if app and st.appendix is not None and app.group(1) == st.appendix:
@@ -185,8 +184,9 @@ def chunk_volume(pdf_path: Path, volume: int) -> list[Chunk]:
                 st.last_minor = minor
                 current = new_draft("paragraph", f"{app.group(1)}{app.group(2)}")
                 if app.group(3):
-                    current.lines.append(Line(app.group(3), ln.pdf_page, ln.printed_page,
-                                              ln.is_bold, ln.font_size, ln.effective_note))
+                    current.lines.append(
+                        Line(app.group(3), ln.pdf_page, ln.printed_page, ln.is_bold, ln.font_size, ln.effective_note)
+                    )
                 continue
 
         if current is None:
@@ -200,10 +200,10 @@ def chunk_volume(pdf_path: Path, volume: int) -> list[Chunk]:
 def _table_text(doc: pymupdf.Document, lines: list[Line]) -> str:
     """Rebuild a table chunk's text row by row from the page regions it covers."""
     rows: list[str] = []
-    for pno in sorted({l.pdf_page for l in lines}):
-        on_page = [l for l in lines if l.pdf_page == pno]
-        top = min(l.y0 for l in on_page)
-        bottom = max(l.y1 for l in on_page)
+    for pno in sorted({ln.pdf_page for ln in lines}):
+        on_page = [ln for ln in lines if ln.pdf_page == pno]
+        top = min(ln.y0 for ln in on_page)
+        bottom = max(ln.y1 for ln in on_page)
         rows.extend(table_rows(doc[pno - 1], top, bottom))
     return normalise_whitespace("\n".join(rows))
 
@@ -230,8 +230,8 @@ def _finalise(drafts: list[_Draft], volume: int, doc: pymupdf.Document) -> list[
         seen[base] = n + 1
         cid = base if n == 0 else f"{base}~{n + 1}"
 
-        pages = [l.printed_page for l in d.lines if l.printed_page is not None]
-        notes = {l.effective_note for l in d.lines if l.effective_note}
+        pages = [ln.printed_page for ln in d.lines if ln.printed_page is not None]
+        notes = {ln.effective_note for ln in d.lines if ln.effective_note}
         common = dict(
             volume=volume,
             requirement=d.requirement,
@@ -256,11 +256,13 @@ def repair_ligatures(chunks: list[Chunk]) -> tuple[list[Chunk], dict[str, str]]:
     vocab = build_vocab(c.text for c in chunks)
     repairs = build_repair_map(vocab)
     fixed = [
-        c.model_copy(update={
-            "text": apply_repairs(c.text, repairs),
-            "section_title": apply_repairs(c.section_title, repairs),
-            "subsection": apply_repairs(c.subsection, repairs) if c.subsection else None,
-        })
+        c.model_copy(
+            update={
+                "text": apply_repairs(c.text, repairs),
+                "section_title": apply_repairs(c.section_title, repairs),
+                "subsection": apply_repairs(c.subsection, repairs) if c.subsection else None,
+            }
+        )
         for c in chunks
     ]
     return fixed, repairs

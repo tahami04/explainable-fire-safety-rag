@@ -59,7 +59,7 @@ def read_toc(doc: pymupdf.Document) -> list[TocEntry]:
 def _page_meta(page: pymupdf.Page) -> tuple[int | None, str | None]:
     """Find the printed page number and any 'Effective until/from' marker on a page."""
     printed, effective = None, None
-    for x0, y0, x1, y1, text, *_ in page.get_text("blocks"):
+    for _x0, y0, _x1, _y1, text, *_ in page.get_text("blocks"):
         flat = _clean(text)
         m = _EFFECTIVE.search(flat)
         if m:
@@ -98,15 +98,19 @@ def iter_lines(pdf_path: Path, first_pdf_page: int, last_pdf_page: int) -> list[
     return out
 
 
-def table_rows(page: pymupdf.Page, y_top: float, y_bottom: float, row_tol: float = 3.0,
-               cell_gap: float = 8.0) -> list[str]:
+def table_rows(
+    page: pymupdf.Page, y_top: float, y_bottom: float, row_tol: float = 3.0, cell_gap: float = 8.0
+) -> list[str]:
     """Rebuild a borderless table as ``cell | cell | cell`` rows.
 
     Words are grouped into visual rows by vertical centre, then split into cells
     wherever the horizontal gap between consecutive words exceeds ``cell_gap``.
     """
-    words = [w for w in page.get_text("words")
-             if y_top - 1 <= w[1] and w[3] <= y_bottom + 1 and HEADER_MAX_Y < w[1] < FOOTER_MIN_Y]
+    words = [
+        w
+        for w in page.get_text("words")
+        if y_top - 1 <= w[1] and w[3] <= y_bottom + 1 and HEADER_MAX_Y < w[1] < FOOTER_MIN_Y
+    ]
     words.sort(key=lambda w: ((w[1] + w[3]) / 2, w[0]))
     rows: list[tuple[float, list[tuple]]] = []
     for w in words:

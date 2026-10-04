@@ -73,7 +73,9 @@ def load_taxonomy(path: Path) -> Taxonomy:
         children[top["id"]] = []
         for ch in top.get("children", []):
             nodes[ch["id"]] = TaxonomyNode(
-                ch["id"], ch["label"], parent=top["id"],
+                ch["id"],
+                ch["label"],
+                parent=top["id"],
                 description=ch.get("description", ""),
                 sections=tuple(ch.get("sections", [])),
                 appendix_sections=tuple(ch.get("appendix_sections", [])),
@@ -96,8 +98,7 @@ def tag_structure(chunk: Chunk, tax: Taxonomy) -> list[str]:
         return []
     heading = f"{chunk.section_title} {chunk.subsection or ''}".lower()
     return [
-        nid for nid in tax.children[chunk.requirement]
-        if any(_contains(heading, s) for s in tax.nodes[nid].sections)
+        nid for nid in tax.children[chunk.requirement] if any(_contains(heading, s) for s in tax.nodes[nid].sections)
     ]
 
 
