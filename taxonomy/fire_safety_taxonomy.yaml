@@ -1,0 +1,124 @@
+# Draft fire-safety taxonomy for Approved Document B.
+#
+# STATUS: DRAFT. Built from the structure of Approved Document B by a non-specialist.
+# It is intended as a starting point to be reviewed, corrected and extended together
+# with senior fire engineers before any real use.
+#
+# Tagging order (see src/firerag/taxonomy/tagger.py):
+#   1. structure  – the chunk's Requirement + section/subsection heading matches `sections`
+#                   (or, for appendices, the appendix title matches `appendix_sections`)
+#   2. keyword    – at least `min_keyword_hits` of the node's `keywords` occur in the text
+#   3. embedding  – nearest node `description` by cosine similarity, above a threshold
+#                   AND clearly ahead of the runner-up (otherwise left untagged)
+# Every tag records which rule produced it, so a tag can always be explained.
+
+version: 0.1-draft
+min_keyword_hits: 2
+
+nodes:
+  - id: B1
+    label: Means of warning and escape
+    children:
+      - id: B1.alarm
+        label: Fire detection and alarm systems
+        description: Smoke and heat alarms, fire detection and alarm system categories, grades and installation.
+        sections: ["Fire detection and alarm", "Alarm"]
+        keywords: [smoke alarm, heat alarm, fire alarm, detection, BS 5839, alarm system]
+      - id: B1.escape_routes
+        label: Escape routes and travel distance
+        description: Horizontal means of escape, number of escape routes and exits, travel distance limits, dead ends, corridors and inner rooms.
+        sections: ["horizontal escape", "Means of escape", "Small premises", "Escape route design", "Residential care homes"]
+        keywords: [travel distance, escape route, dead end, inner room, storey exit, alternative escape, protected corridor]
+      - id: B1.escape_stairs
+        label: Escape stairs and vertical escape
+        description: Number, width and protection of escape stairs, protected stairways, refuges, evacuation lifts and phased evacuation.
+        sections: ["vertical escape", "common stairs", "Escape stairs", "Number of escape stairs", "Width of escape stairs", "Provision of refuges"]
+        keywords: [escape stair, protected stairway, refuge, evacuation lift, phased evacuation, stair width, second stair]
+      - id: B1.doors_exits
+        label: Doors, final exits and escape lighting
+        description: Doors on escape routes, door fastenings and direction of opening, final exits, emergency escape lighting and exit signage.
+        sections: ["Doors on escape routes", "Final exits", "General provisions", "Lifts"]
+        keywords: [final exit, emergency lighting, escape lighting, exit sign, door fastening, direction of opening, panic]
+
+  - id: B2
+    label: Internal fire spread (linings)
+    children:
+      - id: B2.linings
+        label: Classification of wall and ceiling linings
+        description: Reaction-to-fire classification of internal wall and ceiling linings in rooms and circulation spaces.
+        sections: ["Wall and ceiling linings", "Classification of linings"]
+        keywords: [lining, linings, ceiling, class B-s3, class C-s3, reaction to fire, surface spread of flame]
+      - id: B2.thermoplastics
+        label: Thermoplastic materials
+        description: Thermoplastic rooflights, lighting diffusers and suspended ceilings and the limits on their use.
+        sections: ["Thermoplastic materials"]
+        keywords: [thermoplastic, rooflight, lighting diffuser, TP(a), TP(b)]
+
+  - id: B3
+    label: Internal fire spread (structure)
+    children:
+      - id: B3.compartmentation
+        label: Structure and compartmentation
+        description: Fire resistance of loadbearing elements of structure, compartment walls and floors, protected shafts and places of special fire hazard.
+        sections: ["Loadbearing elements", "Compartmentation", "Internal fire spread – dwellinghouses", "Fire resistance standard", "Raised storage"]
+        keywords: [compartment wall, compartment floor, compartmentation, protected shaft, fire resistance, loadbearing, REI]
+      - id: B3.sprinklers
+        label: Sprinklers
+        description: Provision and design of automatic sprinkler systems, including requirements in blocks of flats and residential buildings.
+        sections: ["Sprinklers"]
+        appendix_sections: ["Appendix E: Sprinklers"]
+        keywords: [sprinkler, sprinklers, BS EN 12845, BS 9251, suppression]
+      - id: B3.cavities
+        label: Cavities and cavity barriers
+        description: Concealed spaces, cavity barriers, their location, construction and maximum dimensions of cavities.
+        sections: ["Cavities"]
+        keywords: [cavity barrier, cavity barriers, cavity, concealed space]
+      - id: B3.openings_fire_doors
+        label: Openings, fire-stopping and fire doors
+        description: Openings in compartmentation, fire-stopping of pipes and ducts, fire dampers, fire doorsets and self-closing devices.
+        sections: ["Protection of openings", "fire-stopping", "Fire doorsets", "Openings in compartmentation"]
+        appendix_sections: ["Appendix C: Fire doorsets"]
+        keywords: [fire door, fire doorset, fire-stopping, fire stopping, self-closing, fire damper, penetration, E 30, EI 30]
+
+  - id: B4
+    label: External fire spread
+    children:
+      - id: B4.external_walls
+        label: External walls and cladding
+        description: Combustibility of external wall materials, cladding, specified attachments, relevant buildings and regulation 7.
+        sections: ["external walls", "Resisting fire spread over external"]
+        keywords: [external wall, cladding, A2-s1, d0, regulation 7, relevant building, balcony, specified attachment]
+      - id: B4.space_separation
+        label: Space separation and boundaries
+        description: Fire spread from one building to another, boundary distances, unprotected areas and notional boundaries.
+        sections: ["from one building to another"]
+        keywords: [boundary, unprotected area, space separation, notional boundary, relevant boundary]
+      - id: B4.roofs
+        label: Roof coverings
+        description: Performance of roof coverings and separation distances from the boundary for roofs.
+        sections: ["roof coverings"]
+        keywords: [roof covering, BROOF, roof, rooflight]
+
+  - id: B5
+    label: Access and facilities for the fire service
+    children:
+      - id: B5.vehicle_access
+        label: Fire service vehicle access
+        description: Access routes and hardstandings for fire appliances, turning facilities and perimeter access.
+        sections: ["Vehicle access"]
+        keywords: [vehicle access, fire appliance, pump appliance, high reach, turning, hardstanding, perimeter]
+      - id: B5.fire_mains
+        label: Fire mains and hydrants
+        description: Dry and wet fire mains, inlets and outlets, and private fire hydrants.
+        sections: ["Fire mains", "hydrants"]
+        keywords: [fire main, dry main, wet main, hydrant, inlet, outlet]
+      - id: B5.firefighting_access
+        label: Firefighting shafts and personnel access
+        description: Firefighting shafts, firefighting stairs and lifts, access for firefighting personnel into buildings.
+        sections: ["Access to buildings for firefighting", "firefighting personnel"]
+        keywords: [firefighting shaft, firefighting lift, firefighting stair, firefighting lobby]
+      - id: B5.smoke_venting
+        label: Venting of heat and smoke from basements
+        description: Smoke outlets and venting of heat and smoke from basement storeys.
+        sections: ["Venting of heat and smoke"]
+        keywords: [smoke vent, smoke outlet, basement, venting]
