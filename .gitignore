@@ -20,3 +20,4 @@ dist/
 .idea/
 .vscode/
 .claude/
+eval/results/.cache_*

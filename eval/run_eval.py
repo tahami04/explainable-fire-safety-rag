@@ -3,6 +3,7 @@
 Usage:
     python eval/run_eval.py --mode retrieval   # no API key needed
     python eval/run_eval.py --mode full        # needs an LLM provider configured in .env
+    Add --fresh to discard cached per-question results (they let a rate-limited run resume).
 
 Metric definitions (also written into the results file):
 
@@ -49,7 +50,11 @@ def _pct(xs: list[float]) -> float | None:
     return round(sum(xs) / len(xs), 3) if xs else None
 
 
-def evaluate(mode: str, n_samples: int | None) -> dict:
+def _cache_path(mode: str, model: str | None) -> Path:
+    return ROOT / "eval" / "results" / f".cache_{mode}_{(model or 'none').replace('/', '_')}.jsonl"
+
+
+def evaluate(mode: str, n_samples: int | None, fresh: bool = False) -> dict:
     """Run every question and compute aggregate metrics."""
     s = get_settings()
     qs = yaml.safe_load((ROOT / "eval" / "questions.yaml").read_text())
@@ -59,11 +64,33 @@ def evaluate(mode: str, n_samples: int | None) -> dict:
         raise SystemExit("Full mode needs an LLM provider: set OPENAI_API_KEY (or LLM_PROVIDER=ollama) in .env")
     pipe.ask("warm-up: protected shafts", mode="retrieval_only")  # load models before timing
 
+    # Per-question results are cached as they complete so a run interrupted by an API
+    # rate limit can resume. The cache key includes model and prompt version.
+    model = pipe.provider.model if (pipe.provider and run_mode == "full") else None
+    cache_file = _cache_path(run_mode, model)
+    cache: dict[str, dict] = {}
+    if fresh and cache_file.exists():
+        cache_file.unlink()
+    if cache_file.exists():
+        for line in cache_file.read_text().splitlines():
+            row = json.loads(line)
+            if row.get("prompt_version") == s.prompt_version:
+                cache[row["id"]] = row
     rows = []
     for item in qs["in_scope"] + qs["out_of_scope"]:
+        if item["id"] in cache:
+            rows.append(cache[item["id"]])
+            print(f"{item['id']}  (cached)")
+            continue
         in_scope = "expected" in item
         t0 = time.perf_counter()
-        r: AskResult = pipe.ask(item["question"], mode=run_mode, n_samples=n_samples)
+        try:
+            r: AskResult = pipe.ask(item["question"], mode=run_mode, n_samples=n_samples)
+        except Exception as exc:  # e.g. openai.RateLimitError
+            raise SystemExit(
+                f"\nStopped at {item['id']}: {type(exc).__name__}: {str(exc)[:300]}\n"
+                f"{len(rows)} results are cached in {cache_file.relative_to(ROOT)}; re-run the same command to resume."
+            ) from exc
         latency = time.perf_counter() - t0
         exp = item.get("expected", [])
         top5 = [e.chunk_id for e in r.evidence[:5]]
@@ -85,8 +112,12 @@ def evaluate(mode: str, n_samples: int | None) -> dict:
                 "caveats": r.caveats,
                 "latency_s": round(latency, 2),
                 "latency_breakdown_ms": r.latency_ms,
+                "prompt_version": r.prompt_version,
+                "model": r.model,
             }
         )
+        with cache_file.open("a") as fh:
+            fh.write(json.dumps(rows[-1], ensure_ascii=False) + "\n")
         print(
             f"{item['id']}  hit@5={'Y' if rank else 'n'}  abstained={r.abstained!s:5}  "
             f"conf={r.confidence.label:6}  {latency:5.1f}s  {item['question'][:60]}"
@@ -184,8 +215,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["retrieval", "full"], default="retrieval")
     ap.add_argument("--samples", type=int, default=None, help="Override self-consistency samples (full mode).")
+    ap.add_argument("--fresh", action="store_true", help="Ignore cached per-question results.")
     args = ap.parse_args()
-    out = evaluate(args.mode, args.samples)
+    out = evaluate(args.mode, args.samples, fresh=args.fresh)
     path = ROOT / "eval" / "results" / f"{args.mode}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(out, indent=2, ensure_ascii=False))
