@@ -1,0 +1,81 @@
+# Evaluation set (ILLUSTRATIVE).
+#
+# Written by a non-specialist from the text of Approved Document B (2019 edition
+# incorporating 2020, 2022, 2025 and 2026 amendments, collated with 2029 amendments).
+# NOT reviewed by a fire engineer or other domain expert. Expected references are
+# the chunk IDs of the paragraph(s)/table(s) that contain the answer; a retrieved
+# window of a split chunk (e.g. "v2-3.18-w1") counts as its parent.
+
+in_scope:
+  - id: q01
+    question: What standard of fire detection and alarm system should all dwellings have?
+    expected: [v1-1.1]
+  - id: q02
+    question: What are the minimum dimensions of the openable area of an emergency escape window in a dwellinghouse?
+    expected: [v1-2.10]
+  - id: q03
+    question: In a dwellinghouse with one storey more than 4.5m above ground level, what escape provision is needed?
+    expected: [v1-2.5]
+  - id: q04
+    question: When should a block of flats be fitted with a sprinkler system?
+    expected: [v1-7.4]
+  - id: q05
+    question: When should flats be served by more than one common stair?
+    expected: [v1-3.30]
+  - id: q06
+    question: Where should evacuation lifts in a block of flats be located?
+    expected: [v1-3.29]
+  - id: q07
+    question: What classification is required for wall and ceiling linings in circulation spaces within a dwelling?
+    expected: [v1-T4.1]
+  - id: q08
+    question: What is the maximum travel distance where travel is possible in one direction only in an office?
+    expected: [v2-T2.1]
+  - id: q09
+    question: How should the number of escape routes and exits from a room or storey be decided in a building other than a dwelling?
+    expected: [v2-2.9, v2-2.3, v2-T2.2]
+  - id: q10
+    question: In what situations can a single escape stair serve a building other than a dwelling?
+    expected: [v2-3.3]
+  - id: q11
+    question: What is a protected shaft?
+    expected: [v2-8.6]
+  - id: q12
+    question: What should all compartment walls and compartment floors achieve?
+    expected: [v2-8.15]
+  - id: q13
+    question: Why should cavity barriers be provided?
+    expected: [v1-5.17, v2-9.2]
+  - id: q14
+    question: What minimum fire resistance performance is sufficient to protect means of escape in buildings other than dwellings?
+    expected: [v2-5.2]
+  - id: q15
+    question: What criteria must a building designed for phased evacuation satisfy?
+    expected: [v2-3.21]
+  - id: q16
+    question: For a small building without fire mains, what vehicle access for a pump appliance is needed?
+    expected: [v2-15.1, v2-T15.1]
+  - id: q17
+    question: When does a building need firefighting shafts containing a firefighting lift?
+    expected: [v2-17.2, v1-15.2]
+  - id: q18
+    question: How close to a dwellinghouse must access for a pumping appliance be provided?
+    expected: [v1-13.1]
+  - id: q19
+    question: In a dwelling building with a storey 18m or more in height, what class must insulation products in the external wall achieve?
+    expected: [v1-10.6]
+  - id: q20
+    question: Why are smoke outlets provided from basements?
+    expected: [v2-18.1]
+
+out_of_scope:
+  - id: x01
+    question: What size of electrical cable should I use for a cooker circuit?
+  - id: x02
+    question: Do I need planning permission for a loft conversion?
+  - id: x03
+    question: What U-value must a new external wall achieve for thermal insulation?
+  - id: x04
+    question: How many accessible parking spaces does a new office building need?
+  - id: x05
+    question: What gas safety checks are required when installing a boiler?

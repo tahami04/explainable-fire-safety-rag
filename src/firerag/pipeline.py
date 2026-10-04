@@ -73,6 +73,7 @@ class AnswerSentenceOut(BaseModel):
     faithfulness: str
     entailment: float
     faithfulness_note: str
+    citation_entailment: dict[str, float] = {}
 
 
 class AskResult(BaseModel):
@@ -269,6 +270,7 @@ class Pipeline:
                     faithfulness=f.label,
                     entailment=f.entailment,
                     faithfulness_note=note.strip(),
+                    citation_entailment=f.per_citation,
                 )
             )
         timings["verification"] = int((time.perf_counter() - t2) * 1000)

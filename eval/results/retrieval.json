@@ -1,0 +1,1146 @@
+{
+  "run_at": "2026-10-04T23:41:47+00:00",
+  "mode": "retrieval_only",
+  "provider": null,
+  "model": null,
+  "consistency_samples": 5,
+  "settings": {
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "nli_model": "cross-encoder/nli-deberta-v3-small",
+    "top_k": 6,
+    "min_retrieval_strength": 0.1,
+    "nli_supported": 0.5,
+    "nli_partial": 0.15,
+    "w_retrieval": 0.3,
+    "w_faithfulness": 0.4,
+    "w_consistency": 0.3,
+    "conf_high": 0.75,
+    "conf_medium": 0.5,
+    "abstain_below": 0.35
+  },
+  "metric_definitions": "* hit@5 / MRR@5     – an expected chunk appears in the top 5 retrieved passages / reciprocal rank.\n* answer rate       – share of in-scope questions answered (not abstained).\n* faithfulness      – share of answer sentences labelled Supported by the NLI check\n                      (strict), and Supported + Partially supported (lenient).\n* citation validity – share of model citations that point to a retrieved passage.\n* quote verbatim    – share of quotes found verbatim in the passage they cite.\n* citation precision (NLI)      – share of valid citations whose passage alone entails\n                                  (≥ partial threshold) the sentence citing it.\n* citation precision (expected) – share of valid citations that are one of the question's\n                                  expected chunks. Strict: other relevant paragraphs count as misses.\n* abstention accuracy (OOS)     – share of out-of-scope questions where the system abstained.\n* latency           – wall-clock seconds per question, end to end.",
+  "metrics": {
+    "n_in_scope": 20,
+    "n_out_of_scope": 5,
+    "retrieval_hit_at_5": 0.95,
+    "retrieval_mrr_at_5": 0.9,
+    "abstention_accuracy_oos": 0.6,
+    "in_scope_answer_rate": 1.0,
+    "latency_mean_s": 0.55,
+    "latency_median_s": 0.61,
+    "latency_max_s": 0.81,
+    "oos_retrieval_strength": {
+      "x01": 0.0002,
+      "x02": 0.1668,
+      "x03": 0.8254,
+      "x04": 0.0253,
+      "x05": 0.0089
+    },
+    "in_scope_retrieval_strength_min": 0.9885,
+    "gate_sensitivity": [
+      {
+        "threshold": 0.05,
+        "oos_refused": 0.6,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.1,
+        "oos_refused": 0.6,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.2,
+        "oos_refused": 0.8,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.5,
+        "oos_refused": 0.8,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.9,
+        "oos_refused": 1.0,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.99,
+        "oos_refused": 1.0,
+        "in_scope_passed": 0.95
+      }
+    ]
+  },
+  "rows": [
+    {
+      "id": "q01",
+      "question": "What standard of fire detection and alarm system should all dwellings have?",
+      "in_scope": true,
+      "expected": [
+        "v1-1.1"
+      ],
+      "top5": [
+        "v1-1.1",
+        "v1-1.6",
+        "v1-1.7",
+        "v2-2.41",
+        "v2-1.1"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9999,
+      "confidence": {
+        "retrieval_strength": 0.9999,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.2,
+      "latency_breakdown_ms": {
+        "retrieval": 195,
+        "total": 195
+      }
+    },
+    {
+      "id": "q02",
+      "question": "What are the minimum dimensions of the openable area of an emergency escape window in a dwellinghouse?",
+      "in_scope": true,
+      "expected": [
+        "v1-2.10"
+      ],
+      "top5": [
+        "v1-2.10",
+        "v1-3.6",
+        "v1-2.2",
+        "v1-3.16",
+        "v1-2.3"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.61,
+      "latency_breakdown_ms": {
+        "retrieval": 613,
+        "total": 613
+      }
+    },
+    {
+      "id": "q03",
+      "question": "In a dwellinghouse with one storey more than 4.5m above ground level, what escape provision is needed?",
+      "in_scope": true,
+      "expected": [
+        "v1-2.5"
+      ],
+      "top5": [
+        "v1-2.6",
+        "v1-2.4",
+        "v1-2.8",
+        "v1-2.7",
+        "v1-2.3"
+      ],
+      "hit_rank": null,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9995,
+      "confidence": {
+        "retrieval_strength": 0.9995,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.65,
+      "latency_breakdown_ms": {
+        "retrieval": 646,
+        "total": 646
+      }
+    },
+    {
+      "id": "q04",
+      "question": "When should a block of flats be fitted with a sprinkler system?",
+      "in_scope": true,
+      "expected": [
+        "v1-7.4"
+      ],
+      "top5": [
+        "v1-7.4",
+        "v1-16.11",
+        "v2-2.46",
+        "v2-18.11",
+        "v1-13.6"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.71,
+      "latency_breakdown_ms": {
+        "retrieval": 709,
+        "total": 709
+      }
+    },
+    {
+      "id": "q05",
+      "question": "When should flats be served by more than one common stair?",
+      "in_scope": true,
+      "expected": [
+        "v1-3.30"
+      ],
+      "top5": [
+        "v1-3.30",
+        "v1-D3.8",
+        "v1-3.68",
+        "v1-3.27",
+        "v1-3.69"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9998,
+      "confidence": {
+        "retrieval_strength": 0.9998,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.63,
+      "latency_breakdown_ms": {
+        "retrieval": 625,
+        "total": 625
+      }
+    },
+    {
+      "id": "q06",
+      "question": "Where should evacuation lifts in a block of flats be located?",
+      "in_scope": true,
+      "expected": [
+        "v1-3.29"
+      ],
+      "top5": [
+        "v1-3.29",
+        "v1-3.105",
+        "v1-3.54",
+        "v1-3.104",
+        "v1-3.102"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9996,
+      "confidence": {
+        "retrieval_strength": 0.9996,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.65,
+      "latency_breakdown_ms": {
+        "retrieval": 646,
+        "total": 646
+      }
+    },
+    {
+      "id": "q07",
+      "question": "What classification is required for wall and ceiling linings in circulation spaces within a dwelling?",
+      "in_scope": true,
+      "expected": [
+        "v1-T4.1"
+      ],
+      "top5": [
+        "v1-T4.1",
+        "v2-T6.1",
+        "v1-4.2",
+        "v2-6.2",
+        "v1-4.5"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9994,
+      "confidence": {
+        "retrieval_strength": 0.9994,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.26,
+      "latency_breakdown_ms": {
+        "retrieval": 260,
+        "total": 260
+      }
+    },
+    {
+      "id": "q08",
+      "question": "What is the maximum travel distance where travel is possible in one direction only in an office?",
+      "in_scope": true,
+      "expected": [
+        "v2-T2.1"
+      ],
+      "top5": [
+        "v2-T2.1",
+        "v2-2.7",
+        "v2-2.6",
+        "v1-T3.1",
+        "v1-3.27"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9885,
+      "confidence": {
+        "retrieval_strength": 0.9885,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.99 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.78,
+      "latency_breakdown_ms": {
+        "retrieval": 776,
+        "total": 777
+      }
+    },
+    {
+      "id": "q09",
+      "question": "How should the number of escape routes and exits from a room or storey be decided in a building other than a dwelling?",
+      "in_scope": true,
+      "expected": [
+        "v2-2.9",
+        "v2-2.3",
+        "v2-T2.2"
+      ],
+      "top5": [
+        "v2-2.9",
+        "v2-4.6",
+        "v2-2.3",
+        "v2-2.14",
+        "v2-2.16"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9992,
+      "confidence": {
+        "retrieval_strength": 0.9992,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.53,
+      "latency_breakdown_ms": {
+        "retrieval": 530,
+        "total": 530
+      }
+    },
+    {
+      "id": "q10",
+      "question": "In what situations can a single escape stair serve a building other than a dwelling?",
+      "in_scope": true,
+      "expected": [
+        "v2-3.3"
+      ],
+      "top5": [
+        "v2-3.3",
+        "v2-4.7",
+        "v2-4.9",
+        "v2-3.41",
+        "v2-3.31"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9998,
+      "confidence": {
+        "retrieval_strength": 0.9998,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.75,
+      "latency_breakdown_ms": {
+        "retrieval": 752,
+        "total": 752
+      }
+    },
+    {
+      "id": "q11",
+      "question": "What is a protected shaft?",
+      "in_scope": true,
+      "expected": [
+        "v2-8.6"
+      ],
+      "top5": [
+        "v1-7.21",
+        "v2-8.6",
+        "v2-8.36",
+        "v1-7.26",
+        "v2-8.38"
+      ],
+      "hit_rank": 2,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9987,
+      "confidence": {
+        "retrieval_strength": 0.9987,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.41,
+      "latency_breakdown_ms": {
+        "retrieval": 413,
+        "total": 414
+      }
+    },
+    {
+      "id": "q12",
+      "question": "What should all compartment walls and compartment floors achieve?",
+      "in_scope": true,
+      "expected": [
+        "v2-8.15"
+      ],
+      "top5": [
+        "v2-8.15",
+        "v1-7.5",
+        "v1-5.8",
+        "v1-5.11",
+        "v2-8.25"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9999,
+      "confidence": {
+        "retrieval_strength": 0.9999,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.43,
+      "latency_breakdown_ms": {
+        "retrieval": 433,
+        "total": 433
+      }
+    },
+    {
+      "id": "q13",
+      "question": "Why should cavity barriers be provided?",
+      "in_scope": true,
+      "expected": [
+        "v1-5.17",
+        "v2-9.2"
+      ],
+      "top5": [
+        "v1-8.2",
+        "v2-9.2",
+        "v1-5.17",
+        "v1-5.18",
+        "v1-8.3"
+      ],
+      "hit_rank": 2,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.45,
+      "latency_breakdown_ms": {
+        "retrieval": 449,
+        "total": 449
+      }
+    },
+    {
+      "id": "q14",
+      "question": "What minimum fire resistance performance is sufficient to protect means of escape in buildings other than dwellings?",
+      "in_scope": true,
+      "expected": [
+        "v2-5.2"
+      ],
+      "top5": [
+        "v2-5.2",
+        "v2-D3.4",
+        "v2-5.3",
+        "v2-3.32",
+        "v2-pre-requirement-b1-means-of-~2"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9999,
+      "confidence": {
+        "retrieval_strength": 0.9999,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.59,
+      "latency_breakdown_ms": {
+        "retrieval": 590,
+        "total": 591
+      }
+    },
+    {
+      "id": "q15",
+      "question": "What criteria must a building designed for phased evacuation satisfy?",
+      "in_scope": true,
+      "expected": [
+        "v2-3.21"
+      ],
+      "top5": [
+        "v2-3.21",
+        "v2-3.19",
+        "v2-5.37",
+        "v2-3.20",
+        "v2-pre-section-3-design-for-ver"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9995,
+      "confidence": {
+        "retrieval_strength": 0.9995,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.81,
+      "latency_breakdown_ms": {
+        "retrieval": 811,
+        "total": 812
+      }
+    },
+    {
+      "id": "q16",
+      "question": "For a small building without fire mains, what vehicle access for a pump appliance is needed?",
+      "in_scope": true,
+      "expected": [
+        "v2-15.1",
+        "v2-T15.1"
+      ],
+      "top5": [
+        "v2-15.1",
+        "v2-15.5",
+        "v1-13.6",
+        "v2-15.4",
+        "v1-13.5"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.42,
+      "latency_breakdown_ms": {
+        "retrieval": 422,
+        "total": 422
+      }
+    },
+    {
+      "id": "q17",
+      "question": "When does a building need firefighting shafts containing a firefighting lift?",
+      "in_scope": true,
+      "expected": [
+        "v2-17.2",
+        "v1-15.2"
+      ],
+      "top5": [
+        "v2-17.2",
+        "v1-15.2",
+        "v2-17.6",
+        "v1-15.3",
+        "v2-17.3"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9988,
+      "confidence": {
+        "retrieval_strength": 0.9988,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.51,
+      "latency_breakdown_ms": {
+        "retrieval": 509,
+        "total": 509
+      }
+    },
+    {
+      "id": "q18",
+      "question": "How close to a dwellinghouse must access for a pumping appliance be provided?",
+      "in_scope": true,
+      "expected": [
+        "v1-13.1"
+      ],
+      "top5": [
+        "v1-13.1",
+        "v1-13.5",
+        "v2-15.4",
+        "v1-13.2",
+        "v2-15.1"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.62,
+      "latency_breakdown_ms": {
+        "retrieval": 621,
+        "total": 621
+      }
+    },
+    {
+      "id": "q19",
+      "question": "In a dwelling building with a storey 18m or more in height, what class must insulation products in the external wall achieve?",
+      "in_scope": true,
+      "expected": [
+        "v1-10.6"
+      ],
+      "top5": [
+        "v1-10.6",
+        "v2-12.6",
+        "v1-10.7",
+        "v2-12.7",
+        "v2-12.15"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9989,
+      "confidence": {
+        "retrieval_strength": 0.9989,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.7,
+      "latency_breakdown_ms": {
+        "retrieval": 696,
+        "total": 697
+      }
+    },
+    {
+      "id": "q20",
+      "question": "Why are smoke outlets provided from basements?",
+      "in_scope": true,
+      "expected": [
+        "v2-18.1"
+      ],
+      "top5": [
+        "v2-18.1",
+        "v1-16.1",
+        "v2-18.2",
+        "v2-18.3",
+        "v1-16.2"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.999,
+      "confidence": {
+        "retrieval_strength": 0.999,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.21,
+      "latency_breakdown_ms": {
+        "retrieval": 214,
+        "total": 214
+      }
+    },
+    {
+      "id": "x01",
+      "question": "What size of electrical cable should I use for a cooker circuit?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v1-3.51",
+        "v2-5.30",
+        "v1-3.50",
+        "v2-5.29",
+        "v2-10.4"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "Best passage relevance 0.00 is below the threshold 0.10; the question looks out of scope.",
+      "retrieval_strength": 0.0002,
+      "confidence": {
+        "retrieval_strength": 0.0002,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.00 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.7,
+      "latency_breakdown_ms": {
+        "retrieval": 702,
+        "total": 702
+      }
+    },
+    {
+      "id": "x02",
+      "question": "Do I need planning permission for a loft conversion?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v1-2.23",
+        "v1-2.21",
+        "v1-2.22",
+        "v1-5.4",
+        "v1-E2"
+      ],
+      "hit_rank": null,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.1668,
+      "confidence": {
+        "retrieval_strength": 0.1668,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.17 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.39,
+      "latency_breakdown_ms": {
+        "retrieval": 393,
+        "total": 394
+      }
+    },
+    {
+      "id": "x03",
+      "question": "What U-value must a new external wall achieve for thermal insulation?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v2-12.22",
+        "v1-10.21",
+        "v2-12.11",
+        "v1-10.3",
+        "v1-10.10"
+      ],
+      "hit_rank": null,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.8254,
+      "confidence": {
+        "retrieval_strength": 0.8254,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.83 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.72,
+      "latency_breakdown_ms": {
+        "retrieval": 722,
+        "total": 722
+      }
+    },
+    {
+      "id": "x04",
+      "question": "How many accessible parking spaces does a new office building need?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v2-pre-section-3-design-for-ver",
+        "v2-TD1",
+        "v1-TD1",
+        "v2-15.3",
+        "v2-3.18-w1"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "Best passage relevance 0.03 is below the threshold 0.10; the question looks out of scope.",
+      "retrieval_strength": 0.0253,
+      "confidence": {
+        "retrieval_strength": 0.0253,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.03 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.77,
+      "latency_breakdown_ms": {
+        "retrieval": 770,
+        "total": 771
+      }
+    },
+    {
+      "id": "x05",
+      "question": "What gas safety checks are required when installing a boiler?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v2-8.37",
+        "v1-7.27",
+        "v2-3.39",
+        "v1-3.83",
+        "v1-pre-appendix-g-documents-ref"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "Best passage relevance 0.01 is below the threshold 0.10; the question looks out of scope.",
+      "retrieval_strength": 0.0089,
+      "confidence": {
+        "retrieval_strength": 0.0089,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": null,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.01 (best reranker relevance of the evidence).",
+          "Retrieval-only mode: no answer was generated, so only evidence relevance is scored."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.37,
+      "latency_breakdown_ms": {
+        "retrieval": 372,
+        "total": 372
+      }
+    }
+  ]
+}
