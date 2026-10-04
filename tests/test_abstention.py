@@ -89,3 +89,13 @@ def test_retrieval_only_mode_without_provider(settings, retriever):
 def test_future_amendment_caveat():
     caveats = provenance_caveats([CHUNKS[2]], today=date(2026, 10, 5))
     assert any("not yet in force" in c for c in caveats)
+
+
+def test_high_requires_strong_faithfulness(settings):
+    assert score_confidence(1.0, 0.5, 1.0, 0, settings).label == "Medium"
+
+
+def test_abstention_has_no_confidence_label(settings, retriever):
+    payload = {**GOOD, "answer": [], "abstained": True}
+    r = _pipeline(settings, retriever, FakeLLM(payload)).ask("What about shafts in compartments?")
+    assert r.confidence.label == "n/a"

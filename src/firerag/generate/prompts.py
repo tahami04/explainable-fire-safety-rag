@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from firerag.retrieve.hybrid import RetrievedChunk
 
-PROMPT_VERSION = "grounded-v1"
+PROMPT_VERSION = "grounded-v2"
 
 SYSTEM_PROMPT = """\
 You help engineers find guidance in the UK Approved Document B (fire safety), \
@@ -18,6 +18,8 @@ even if you believe it is correct.
 2. Every answer sentence must cite at least one evidence chunk_id that directly \
 supports it, and include at least one short quote (max 25 words) copied \
 EXACTLY, character for character, from a cited passage.
+   Write each "sentence" as plain prose stating ONE claim. Do not put chunk_ids, \
+brackets or quotations inside "sentence"; they belong in "citations" and "quotes".
 3. If the evidence does not answer the question, or the question is outside the \
 scope of Approved Document B, set "abstained": true, return an empty "answer" \
 list, and explain what is missing in "caveats".

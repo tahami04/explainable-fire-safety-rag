@@ -77,3 +77,21 @@ def test_table_fallback_requires_grounded_numbers_and_verbatim_quote():
     assert wrong_number.label == "Unsupported"
     assert no_quote.label == "Unsupported"
     assert numbers_grounded("18 and 45", EVIDENCE["v2-T2.1"])
+
+
+def test_hypothesis_cleaning_strips_inline_citations_and_quotes():
+    from firerag.verify.faithfulness import clean_hypothesis
+
+    s = 'Shafts should be protected. [v2-8.6] "These are called protected shafts".'
+    assert clean_hypothesis(s) == "Shafts should be protected."
+
+
+def test_premise_prefix_is_passed_to_scorer():
+    seen = []
+
+    def spy(pairs):
+        seen.extend(pairs)
+        return entail_all(pairs)
+
+    check_sentence("x", ["v2-8.6"], EVIDENCE, spy, 0.5, 0.15, premise_prefix={"v2-8.6": "In Volume 2: "})
+    assert all(p.startswith("In Volume 2: ") for p, _ in seen)

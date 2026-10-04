@@ -35,11 +35,11 @@ class Settings(BaseSettings):
     # --- LLM provider -----------------------------------------------------------
     llm_provider: Literal["openai", "ollama", "none"] = "openai"
     openai_api_key: str | None = None
-    openai_model: str = "gpt-4.1-mini"
+    openai_model: str = "gpt-5.4-mini"
     ollama_base_url: str = "http://localhost:11434/v1"
     ollama_model: str = "llama3.1:8b"
     llm_timeout_s: float = 60.0
-    prompt_version: str = "grounded-v1"
+    prompt_version: str = "grounded-v2"
 
     # --- retrieval ----------------------------------------------------------------
     candidates_per_retriever: int = 30

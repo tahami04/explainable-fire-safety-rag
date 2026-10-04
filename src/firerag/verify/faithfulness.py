@@ -41,6 +41,25 @@ def _softmax(x: np.ndarray) -> np.ndarray:
     return e / e.sum(axis=-1, keepdims=True)
 
 
+_INLINE_CITATION = re.compile(r"\s*\[(?:v[12]-[^\]]+|chunk_id:[^\]]*)\]")
+_TRAILING_QUOTE = re.compile(r"\s*[\"“][^\"”]{3,}[\"”]\.?\s*$")
+
+
+def clean_hypothesis(sentence: str) -> str:
+    """Remove inline chunk-ID brackets and a trailing quoted fragment from a sentence."""
+    out = _INLINE_CITATION.sub("", sentence)
+    while _TRAILING_QUOTE.search(out):
+        out = _TRAILING_QUOTE.sub("", out)
+    return out.strip() or sentence
+
+
+def premise_prefix_for(volume: int, context: str, kind: str, ref: str | None) -> str:
+    """Provenance statement prepended to NLI premises, mirroring what the LLM is shown."""
+    label = {"table": "Table", "diagram": "Diagram"}.get(kind, "paragraph")
+    where = f", {label} {ref}" if ref else ""
+    return f"In Approved Document B {context}{where}: "
+
+
 def split_windows(text: str, size: int = 3) -> list[str]:
     """Overlapping windows of ``size`` sentences/list items (stride 1)."""
     parts = [p.strip() for p in re.split(r"(?<=[.;:])\s+|\n+", text) if p.strip()]
@@ -66,8 +85,17 @@ def check_sentence(
     scorer: NLIScorer,
     supported: float,
     partial: float,
+    premise_prefix: dict[str, str] | None = None,
 ) -> SentenceFaithfulness:
-    """Label one sentence as Supported / Partially supported / Unsupported."""
+    """Label one sentence as Supported / Partially supported / Unsupported.
+
+    ``premise_prefix`` maps chunk_id to a provenance statement (volume, section,
+    paragraph) prepended to every window. Without it, NLI rejects true sentences
+    such as "In Volume 1, blocks of flats … should be fitted with sprinklers"
+    because the passage text alone never says which volume it is from.
+    """
+    sentence = clean_hypothesis(sentence)
+    premise_prefix = premise_prefix or {}
     if not cited:
         return SentenceFaithfulness(
             label="Unsupported",
@@ -80,7 +108,7 @@ def check_sentence(
     pairs, owners = [], []
     for cid in cited:
         for w in split_windows(evidence_text[cid]):
-            pairs.append((w, sentence))
+            pairs.append((premise_prefix.get(cid, "") + w, sentence))
             owners.append(cid)
     probs = _softmax(scorer(pairs))
     ent, con = probs[:, NLI_LABELS.index("entailment")], probs[:, NLI_LABELS.index("contradiction")]

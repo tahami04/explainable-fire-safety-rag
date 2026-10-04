@@ -5,7 +5,7 @@ the user, plus hard rules that can only *lower* confidence:
 
     overall = w_r · retrieval_strength + w_f · faithfulness_rate + w_c · consistency
 
-* High   : overall ≥ conf_high and no Unsupported sentence
+* High   : overall ≥ conf_high, faithfulness ≥ 0.75 and no Unsupported sentence
 * Medium : overall ≥ conf_medium and faithfulness ≥ 0.5
 * Low    : otherwise
 * Abstain: overall < abstain_below, or faithfulness is 0 (no sentence even partly
@@ -26,6 +26,7 @@ from firerag.config import Settings
 
 ConfidenceLabel = Literal["High", "Medium", "Low", "n/a"]
 MIN_FAITHFULNESS_FOR_MEDIUM = 0.5
+MIN_FAITHFULNESS_FOR_HIGH = 0.75
 
 
 class ConfidenceBreakdown(BaseModel):
@@ -84,12 +85,17 @@ def score_confidence(
             reasons.append(
                 f"Capped at Low: faithfulness {faithfulness:.2f} is below {MIN_FAITHFULNESS_FOR_MEDIUM:.2f}."
             )
-    elif overall >= s.conf_high and n_unsupported == 0:
+    elif overall >= s.conf_high and n_unsupported == 0 and (faithfulness or 0.0) >= MIN_FAITHFULNESS_FOR_HIGH:
         label = "High"
     elif overall >= s.conf_medium:
         label = "Medium"
-        if overall >= s.conf_high:
+        if overall >= s.conf_high and n_unsupported:
             reasons.append(f"Capped at Medium: {n_unsupported} sentence(s) unsupported by their citations.")
+        elif overall >= s.conf_high:
+            reasons.append(
+                f"Capped at Medium: faithfulness below {MIN_FAITHFULNESS_FOR_HIGH:.2f} "
+                "(e.g. table look-ups that NLI cannot fully verify)."
+            )
     else:
         label = "Low"
     return ConfidenceBreakdown(

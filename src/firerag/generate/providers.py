@@ -9,10 +9,9 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from firerag.config import Settings
+from openai import BadRequestError
 
-# Reasoning-model families that reject a custom temperature (they sample at 1.0).
-_FIXED_TEMPERATURE_PREFIXES = ("gpt-5", "o1", "o3", "o4")
+from firerag.config import Settings
 
 
 class LLMProvider(Protocol):
@@ -44,13 +43,25 @@ class OpenAICompatibleProvider:
         self.name = name
         self.model = model
         self.supports_n = supports_n
+        self.supports_temperature = True  # set False if the API rejects it (some reasoning models)
         self._client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout)
 
     def complete(self, messages: list[dict[str, str]], temperature: float, n: int = 1) -> list[str]:
         """Request ``n`` JSON-mode completions."""
         kwargs: dict = {"model": self.model, "messages": messages, "response_format": {"type": "json_object"}}
-        if not self.model.startswith(_FIXED_TEMPERATURE_PREFIXES):
+        if self.supports_temperature:
             kwargs["temperature"] = temperature
+        try:
+            return self._create(kwargs, n)
+        except BadRequestError as exc:
+            if "temperature" not in str(exc) or not self.supports_temperature:
+                raise
+            # Model only samples at its default temperature; remember and retry.
+            self.supports_temperature = False
+            kwargs.pop("temperature")
+            return self._create(kwargs, n)
+
+    def _create(self, kwargs: dict, n: int) -> list[str]:
         if self.supports_n:
             resp = self._client.chat.completions.create(n=n, **kwargs)
             return [c.message.content or "" for c in resp.choices]

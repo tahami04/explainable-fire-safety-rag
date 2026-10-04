@@ -36,6 +36,7 @@ from firerag.verify.faithfulness import (
     check_sentence,
     default_scorer,
     faithfulness_rate,
+    premise_prefix_for,
     table_fallback,
 )
 
@@ -98,6 +99,12 @@ class AskResult(BaseModel):
     model: str | None
     prompt_version: str
     latency_ms: dict[str, int]
+
+
+def _withheld(conf: ConfidenceBreakdown, reason: str | None) -> ConfidenceBreakdown:
+    """Confidence for an abstention: no label (it would describe an answer not given), signals kept for audit."""
+    note = f"No answer given ({reason}); signals shown for audit only."
+    return conf.model_copy(update={"label": "n/a", "reasons": [*conf.reasons, note]})
 
 
 def _evidence_items(results: list[RetrievedChunk]) -> list[EvidenceItem]:
@@ -196,7 +203,9 @@ class Pipeline:
 
         if mode == "retrieval_only" or gate.abstain:
             conf = score_confidence(strength, None, None, 0, s)
-            if mode == "retrieval_only":
+            if gate.abstain:
+                conf = _withheld(conf, gate.reason)
+            elif mode == "retrieval_only":
                 conf = conf.model_copy(
                     update={
                         "overall": None,
@@ -227,7 +236,7 @@ class Pipeline:
         gen = generate(self.provider, question, results, n_samples, s.sample_temperature)
         timings["generation"] = int((time.perf_counter() - t1) * 1000)
         if gen.primary is None:
-            conf = score_confidence(strength, None, None, 0, s)
+            conf = _withheld(score_confidence(strength, None, None, 0, s), "generation failed validation")
             result = AskResult(
                 **base,
                 question_interpretation=None,
@@ -248,12 +257,17 @@ class Pipeline:
         primary = gen.primary
         ev_text = {r.chunk.chunk_id: r.chunk.text for r in results}
         by_id = {r.chunk.chunk_id: r.chunk for r in results}
+        prefixes = {
+            cid: premise_prefix_for(c.volume, c.context_header(), c.kind, c.paragraph_ref) for cid, c in by_id.items()
+        }
         cit_reports = validate_citations(primary, ev_text)
 
         sentences: list[AnswerSentenceOut] = []
         labels = []
         for sent, rep in zip(primary.answer, cit_reports, strict=True):
-            f = check_sentence(sent.sentence, rep.valid, ev_text, self.nli, s.nli_supported, s.nli_partial)
+            f = check_sentence(
+                sent.sentence, rep.valid, ev_text, self.nli, s.nli_supported, s.nli_partial, premise_prefix=prefixes
+            )
             tables = {c: ev_text[c] for c in rep.valid if by_id[c].kind == "table"}
             f = table_fallback(f, sent.sentence, tables, rep.all_quotes_verbatim, bool(rep.quotes))
             note = f.note
@@ -284,6 +298,8 @@ class Pipeline:
         conf = score_confidence(strength, faith, cons.score if cons else None, n_unsupported, s)
         n_valid = sum(1 for r in cit_reports if r.has_valid_citation)
         decision = post_generation_abstention(primary.abstained, n_valid, conf.overall or 0.0, s, faithfulness=faith)
+        if decision.abstain:
+            conf = _withheld(conf, decision.reason)
 
         cited_ids = list(dict.fromkeys(c for so in sentences for c in so.citations))
         caveats = list(dict.fromkeys(primary.caveats + provenance_caveats([by_id[c] for c in cited_ids])))
