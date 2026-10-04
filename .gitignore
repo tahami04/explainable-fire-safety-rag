@@ -1,0 +1,21 @@
+# secrets
+.env
+# data (fetched by scripts/download_data.py) and built index
+data/
+*.pdf
+*.faiss
+# runtime logs (audit + feedback)
+logs/
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+# os / editors
+.DS_Store
+.idea/
+.vscode/
