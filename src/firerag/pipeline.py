@@ -149,6 +149,9 @@ class Pipeline:
         self._nli = nli_scorer
         self._embed = embed
         self.audit = audit
+        # The evaluation sets this so a rate limit stops the run (and it can resume)
+        # instead of being recorded as an abstention.
+        self.raise_provider_errors = False
 
     @property
     def nli(self) -> NLIScorer:
@@ -233,19 +236,32 @@ class Pipeline:
             return result
 
         t1 = time.perf_counter()
-        gen = generate(self.provider, question, results, n_samples, s.sample_temperature)
+        provider_error: str | None = None
+        try:
+            gen = generate(self.provider, question, results, n_samples, s.sample_temperature)
+        except Exception as exc:  # rate limits, timeouts, outages: fail safe, never crash
+            if self.raise_provider_errors:
+                raise
+            gen, provider_error = None, f"{type(exc).__name__}: {str(exc)[:200]}"
         timings["generation"] = int((time.perf_counter() - t1) * 1000)
-        if gen.primary is None:
-            conf = _withheld(score_confidence(strength, None, None, 0, s), "generation failed validation")
+        if gen is None or gen.primary is None:
+            reason = (
+                f"The language model could not be reached ({provider_error})."
+                if provider_error
+                else "Generation failed validation."
+            )
+            conf = _withheld(score_confidence(strength, None, None, 0, s), reason)
             result = AskResult(
                 **base,
                 question_interpretation=None,
                 answer=[],
                 answer_text=ABSTAIN_MESSAGE,
                 reasoning_pathway=[],
-                caveats=["The model returned malformed output."],
+                caveats=["No answer was generated; the evidence below is still shown."]
+                if provider_error
+                else ["The model returned malformed output."],
                 abstained=True,
-                abstention_reason="Generation failed validation.",
+                abstention_reason=reason,
                 confidence=conf,
                 consistency=None,
                 latency_ms={**timings, "total": int((time.perf_counter() - t0) * 1000)},

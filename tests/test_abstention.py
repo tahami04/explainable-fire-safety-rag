@@ -109,3 +109,15 @@ def test_record_and_replay_roundtrip(tmp_path):
     msgs = [{"role": "user", "content": "q"}]
     first = rec.complete(msgs, 0.7, n=3)
     assert ReplayProvider(path, "fake", "scripted").complete(msgs, 0.7, n=3) == first
+
+
+def test_provider_error_fails_safe(settings, retriever):
+    class Down:
+        name, model = "down", "x"
+
+        def complete(self, messages, temperature, n=1):
+            raise TimeoutError("provider unavailable")
+
+    r = _pipeline(settings, retriever, Down()).ask("Do compartment shafts need protection?")
+    assert r.abstained and r.answer_text == ABSTAIN_MESSAGE and r.evidence
+    assert "could not be reached" in r.abstention_reason

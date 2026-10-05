@@ -48,6 +48,10 @@ def _matches(chunk_id: str, expected: list[str]) -> bool:
     return any(chunk_id == e or chunk_id.startswith((f"{e}-w", f"{e}~")) for e in expected)
 
 
+def _live_latencies(rows: list[dict]) -> list[float]:
+    return [r["latency_s"] for r in rows if not r.get("replayed")]
+
+
 def _pct(xs: list[float]) -> float | None:
     return round(sum(xs) / len(xs), 3) if xs else None
 
@@ -61,6 +65,7 @@ def evaluate(mode: str, n_samples: int | None, fresh: bool = False, replay: bool
     s = get_settings()
     qs = yaml.safe_load((ROOT / "eval" / "questions.yaml").read_text())
     pipe = Pipeline(audit=False)
+    pipe.raise_provider_errors = True
     run_mode = "full" if mode == "full" else "retrieval_only"
     if run_mode == "full" and pipe.provider is None and not replay:
         raise SystemExit("Full mode needs an LLM provider: set OPENAI_API_KEY (or LLM_PROVIDER=ollama) in .env")
@@ -126,6 +131,7 @@ def evaluate(mode: str, n_samples: int | None, fresh: bool = False, replay: bool
                 "latency_breakdown_ms": r.latency_ms,
                 "prompt_version": r.prompt_version,
                 "model": r.model,
+                "replayed": replay,
             }
         )
         with cache_file.open("a") as fh:
@@ -144,9 +150,11 @@ def evaluate(mode: str, n_samples: int | None, fresh: bool = False, replay: bool
         "retrieval_mrr_at_5": _pct([1.0 / r["hit_rank"] if r["hit_rank"] else 0.0 for r in ins]),
         "abstention_accuracy_oos": _pct([1.0 if r["abstained"] else 0.0 for r in oos]),
         "in_scope_answer_rate": _pct([0.0 if r["abstained"] else 1.0 for r in ins]),
-        "latency_mean_s": round(statistics.mean(r["latency_s"] for r in rows), 2),
-        "latency_median_s": round(statistics.median(r["latency_s"] for r in rows), 2),
-        "latency_max_s": round(max(r["latency_s"] for r in rows), 2),
+        # Replayed rows have no LLM time, so latency is computed from live rows only.
+        "latency_mean_s": round(statistics.mean(lat), 2) if (lat := _live_latencies(rows)) else None,
+        "latency_median_s": round(statistics.median(lat), 2) if lat else None,
+        "latency_max_s": round(max(lat), 2) if lat else None,
+        "latency_n_live_questions": len(lat),
         "oos_retrieval_strength": {r["id"]: r["retrieval_strength"] for r in oos},
         "in_scope_retrieval_strength_min": min(r["retrieval_strength"] for r in ins),
         # How the pre-generation gate alone would trade off refusals against answers.
