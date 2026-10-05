@@ -21,6 +21,7 @@ COPY src ./src
 COPY taxonomy ./taxonomy
 COPY scripts ./scripts
 COPY app.py ./
+COPY .streamlit ./.streamlit
 RUN pip install --no-deps .
 
 # Fetch the official PDFs and build the index at build time so the container

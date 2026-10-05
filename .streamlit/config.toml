@@ -1,0 +1,9 @@
+[server]
+# Local runs listen on this machine only; the Dockerfile overrides this with 0.0.0.0.
+address = "localhost"
+headless = true
+# The default watcher crawls transformers' lazy modules and logs import errors.
+fileWatcherType = "none"
+
+[browser]
+gatherUsageStats = false

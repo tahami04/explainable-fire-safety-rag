@@ -8,7 +8,9 @@ and get an answer where every sentence cites the clause, page and quoted text it
 has been checked against that text by an independent model, carries a confidence breakdown,
 and is withheld ("insufficient evidence") when the guidance doesn't support it.
 
-<!-- SCREENSHOTS -->
+| Answer with citations, faithfulness labels and confidence breakdown | Evidence: highlighted passage and why it was retrieved | Out-of-scope refusal |
+|---|---|---|
+| ![Answer](docs/images/answer.jpg) | ![Evidence](docs/images/evidence.jpg) | ![Refusal](docs/images/refusal.jpg) |
 
 > **Demonstration project. Not a substitute for professional fire engineering judgement or
 > the official guidance. Not affiliated with or endorsed by the UK Government.**
