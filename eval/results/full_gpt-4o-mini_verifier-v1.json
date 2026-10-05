@@ -1,0 +1,2325 @@
+{
+  "run_at": "2026-10-05T00:03:35+00:00",
+  "mode": "full",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "consistency_samples": 5,
+  "settings": {
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "nli_model": "cross-encoder/nli-deberta-v3-small",
+    "top_k": 6,
+    "min_retrieval_strength": 0.1,
+    "nli_supported": 0.5,
+    "nli_partial": 0.15,
+    "w_retrieval": 0.3,
+    "w_faithfulness": 0.4,
+    "w_consistency": 0.3,
+    "conf_high": 0.75,
+    "conf_medium": 0.5,
+    "abstain_below": 0.35
+  },
+  "metric_definitions": "* hit@5 / MRR@5     – an expected chunk appears in the top 5 retrieved passages / reciprocal rank.\n* answer rate       – share of in-scope questions answered (not abstained).\n* faithfulness      – share of answer sentences labelled Supported by the NLI check\n                      (strict), and Supported + Partially supported (lenient).\n* citation validity – share of model citations that point to a retrieved passage.\n* quote verbatim    – share of quotes found verbatim in the passage they cite.\n* citation precision (NLI)      – share of valid citations whose passage alone entails\n                                  (≥ partial threshold) the sentence citing it.\n* citation precision (expected) – share of valid citations that are one of the question's\n                                  expected chunks. Strict: other relevant paragraphs count as misses.\n* abstention accuracy (OOS)     – share of out-of-scope questions where the system abstained.\n* latency           – wall-clock seconds per question, end to end.",
+  "metrics": {
+    "n_in_scope": 20,
+    "n_out_of_scope": 5,
+    "retrieval_hit_at_5": 0.95,
+    "retrieval_mrr_at_5": 0.9,
+    "abstention_accuracy_oos": 1.0,
+    "in_scope_answer_rate": 0.75,
+    "latency_mean_s": 9.35,
+    "latency_median_s": 8.01,
+    "latency_max_s": 25.83,
+    "oos_retrieval_strength": {
+      "x01": 0.0002,
+      "x02": 0.1668,
+      "x03": 0.8254,
+      "x04": 0.0253,
+      "x05": 0.0089
+    },
+    "in_scope_retrieval_strength_min": 0.9885,
+    "gate_sensitivity": [
+      {
+        "threshold": 0.05,
+        "oos_refused": 0.6,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.1,
+        "oos_refused": 0.6,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.2,
+        "oos_refused": 0.8,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.5,
+        "oos_refused": 0.8,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.9,
+        "oos_refused": 1.0,
+        "in_scope_passed": 1.0
+      },
+      {
+        "threshold": 0.99,
+        "oos_refused": 1.0,
+        "in_scope_passed": 0.95
+      }
+    ],
+    "n_answer_sentences": 33,
+    "faithfulness_supported": 0.879,
+    "faithfulness_supported_or_partial": 0.909,
+    "faithfulness_labels": {
+      "Supported": 29,
+      "Unsupported": 3,
+      "Partially supported": 1
+    },
+    "citation_validity": 1.0,
+    "quote_verbatim_rate": 0.81,
+    "citation_precision_nli": 0.913,
+    "citation_precision_expected": 0.696,
+    "confidence_labels_in_scope": {
+      "High": 13,
+      "Medium": 2
+    },
+    "mean_consistency_in_scope": 0.926
+  },
+  "rows": [
+    {
+      "id": "q01",
+      "question": "What standard of fire detection and alarm system should all dwellings have?",
+      "in_scope": true,
+      "expected": [
+        "v1-1.1"
+      ],
+      "top5": [
+        "v1-1.1",
+        "v1-1.6",
+        "v1-1.7",
+        "v2-2.41",
+        "v2-1.1"
+      ],
+      "hit_rank": 1,
+      "abstained": true,
+      "abstention_reason": "No answer sentence is supported, even partly, by its citations.",
+      "retrieval_strength": 0.9999,
+      "confidence": {
+        "retrieval_strength": 0.9999,
+        "faithfulness_rate": 0.0,
+        "consistency": 0.9897,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.5969,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.99 (agreement across sampled answers).",
+          "Capped at Low: faithfulness 0.00 is below 0.50.",
+          "No answer given (No answer sentence is supported, even partly, by its citations.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9918,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9897
+      },
+      "answer": [],
+      "caveats": [],
+      "latency_s": 5.94,
+      "latency_breakdown_ms": {
+        "retrieval": 139,
+        "generation": 4928,
+        "verification": 850,
+        "consistency": 20,
+        "total": 5939
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q02",
+      "question": "What are the minimum dimensions of the openable area of an emergency escape window in a dwellinghouse?",
+      "in_scope": true,
+      "expected": [
+        "v1-2.10"
+      ],
+      "top5": [
+        "v1-2.10",
+        "v1-3.6",
+        "v1-2.2",
+        "v1-3.16",
+        "v1-2.3"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.9603,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.988,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.96 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9682,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9603
+      },
+      "answer": [
+        {
+          "sentence": "The minimum dimensions of the openable area of an emergency escape window in a dwellinghouse are a minimum height of 450mm and a minimum width of 450mm.",
+          "citations": [
+            "v1-2.10"
+          ],
+          "citation_labels": [
+            "[Vol 1, B1, para 2.10, p. 15]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-2.10",
+              "text": "a minimum height of 450mm and a minimum width of 450mm",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.996,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-2.10": 0.996
+          }
+        },
+        {
+          "sentence": "Additionally, the openable area must have a minimum area of 0.33m2.",
+          "citations": [
+            "v1-2.10"
+          ],
+          "citation_labels": [
+            "[Vol 1, B1, para 2.10, p. 15]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-2.10",
+              "text": "A minimum area of 0.33m2",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9572,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-2.10": 0.9572
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 10.52,
+      "latency_breakdown_ms": {
+        "retrieval": 354,
+        "generation": 9236,
+        "verification": 888,
+        "consistency": 39,
+        "total": 10517
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q03",
+      "question": "In a dwellinghouse with one storey more than 4.5m above ground level, what escape provision is needed?",
+      "in_scope": true,
+      "expected": [
+        "v1-2.5"
+      ],
+      "top5": [
+        "v1-2.6",
+        "v1-2.4",
+        "v1-2.8",
+        "v1-2.7",
+        "v1-2.3"
+      ],
+      "hit_rank": null,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9995,
+      "confidence": {
+        "retrieval_strength": 0.9995,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.8938,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.968,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.89 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.915,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.8938
+      },
+      "answer": [
+        {
+          "sentence": "The dwellinghouse should have either a protected stairway or access to two ground level final exits.",
+          "citations": [
+            "v1-2.5"
+          ],
+          "citation_labels": [
+            "[Vol 1, B1, para 2.5, p. 11]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-2.5",
+              "text": "the dwellinghouse should have either of the following.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9967,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-2.5": 0.9967
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 11.29,
+      "latency_breakdown_ms": {
+        "retrieval": 370,
+        "generation": 10661,
+        "verification": 222,
+        "consistency": 40,
+        "total": 11294
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q04",
+      "question": "When should a block of flats be fitted with a sprinkler system?",
+      "in_scope": true,
+      "expected": [
+        "v1-7.4"
+      ],
+      "top5": [
+        "v1-7.4",
+        "v1-16.11",
+        "v2-2.46",
+        "v2-18.11",
+        "v1-13.6"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.8457,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9536,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.85 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.8766,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.8457
+      },
+      "answer": [
+        {
+          "sentence": "Blocks of flats should be fitted with a sprinkler system throughout the building if the top storey is more than 11m above ground level.",
+          "citations": [
+            "v1-7.4"
+          ],
+          "citation_labels": [
+            "[Vol 1, B3, para 7.4, p. 60]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-7.4",
+              "text": "Blocks of flats with a top storey more than 11m above ground level should be fitted with a sprinkler system throughout the building",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9937,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v1-7.4": 0.9937
+          }
+        },
+        {
+          "sentence": "Sprinklers do not need to be provided in common areas if these areas are fire sterile.",
+          "citations": [
+            "v1-7.4"
+          ],
+          "citation_labels": [
+            "[Vol 1, B3, para 7.4, p. 60]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-7.4",
+              "text": "they do not need to be provided in the common areas such as stairs, corridors or landings when these areas are fire sterile",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9854,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-7.4": 0.9854
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 9.46,
+      "latency_breakdown_ms": {
+        "retrieval": 416,
+        "generation": 8863,
+        "verification": 141,
+        "consistency": 33,
+        "total": 9455
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q05",
+      "question": "When should flats be served by more than one common stair?",
+      "in_scope": true,
+      "expected": [
+        "v1-3.30"
+      ],
+      "top5": [
+        "v1-3.30",
+        "v1-D3.8",
+        "v1-3.68",
+        "v1-3.27",
+        "v1-3.69"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9998,
+      "confidence": {
+        "retrieval_strength": 0.9998,
+        "faithfulness_rate": 0.5,
+        "consistency": 0.9956,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.7986,
+        "label": "Medium",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.50 (share of sentences entailed by their citations).",
+          "Self-consistency 1.00 (agreement across sampled answers).",
+          "Capped at Medium: 1 sentence(s) unsupported by their citations."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9965,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9956
+      },
+      "answer": [
+        {
+          "sentence": "Flats should be served by more than one common stair if the flat is on a storey that does not meet the criteria for a single escape route.",
+          "citations": [
+            "v1-3.30"
+          ],
+          "citation_labels": [
+            "[Vol 1, B1, para 3.30, p. 29]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-3.30",
+              "text": "Flats should be served by more than one common stair if either of the following applies.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.997,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-3.30": 0.997
+          }
+        },
+        {
+          "sentence": "Flats should also be served by more than one common stair if the building has a top storey of 18m or more in height.",
+          "citations": [
+            "v1-3.30"
+          ],
+          "citation_labels": [
+            "[Vol 1, B1, para 3.30, p. 29]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-3.30",
+              "text": "The building has a top storey of 18m or more in height.",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Unsupported",
+          "entailment": 0.0511,
+          "faithfulness_note": "Cited text does not entail this sentence. A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v1-3.30": 0.0511
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 10.8,
+      "latency_breakdown_ms": {
+        "retrieval": 354,
+        "generation": 10215,
+        "verification": 192,
+        "consistency": 34,
+        "total": 10796
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q06",
+      "question": "Where should evacuation lifts in a block of flats be located?",
+      "in_scope": true,
+      "expected": [
+        "v1-3.29"
+      ],
+      "top5": [
+        "v1-3.29",
+        "v1-3.105",
+        "v1-3.54",
+        "v1-3.104",
+        "v1-3.102"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9996,
+      "confidence": {
+        "retrieval_strength": 0.9996,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.9884,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9964,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.99 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9908,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9884
+      },
+      "answer": [
+        {
+          "sentence": "Evacuation lifts should be located within an evacuation shaft containing a protected stairway, evacuation lift and evacuation lift lobby.",
+          "citations": [
+            "v1-3.29"
+          ],
+          "citation_labels": [
+            "[Vol 1, B1, para 3.29, p. 29]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-3.29",
+              "text": "evacuation lifts should be located within an evacuation shaft containing a protected stairway",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9864,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v1-3.29": 0.9864
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 6.64,
+      "latency_breakdown_ms": {
+        "retrieval": 349,
+        "generation": 6203,
+        "verification": 65,
+        "consistency": 21,
+        "total": 6639
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q07",
+      "question": "What classification is required for wall and ceiling linings in circulation spaces within a dwelling?",
+      "in_scope": true,
+      "expected": [
+        "v1-T4.1"
+      ],
+      "top5": [
+        "v1-T4.1",
+        "v2-T6.1",
+        "v1-4.2",
+        "v2-6.2",
+        "v1-4.5"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9994,
+      "confidence": {
+        "retrieval_strength": 0.9994,
+        "faithfulness_rate": 1.0,
+        "consistency": 1.0,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9998,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 1.00 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 1.0,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 1.0
+      },
+      "answer": [
+        {
+          "sentence": "The classification required for wall and ceiling linings in circulation spaces within a dwelling is B-s3, d2.",
+          "citations": [
+            "v1-T4.1"
+          ],
+          "citation_labels": [
+            "[Vol 1, B2, Table 4.1, p. 44]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-T4.1",
+              "text": "Other circulation spaces within a dwelling Other circulation spaces (including the common areas of blocks of flats) | B-s3, d2(1)",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9548,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v1-T4.1": 0.9548
+          }
+        }
+      ],
+      "caveats": [
+        "Table text was extracted automatically and its layout may be imperfect; check the table in the official PDF."
+      ],
+      "latency_s": 7.69,
+      "latency_breakdown_ms": {
+        "retrieval": 143,
+        "generation": 7328,
+        "verification": 195,
+        "consistency": 22,
+        "total": 7690
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q08",
+      "question": "What is the maximum travel distance where travel is possible in one direction only in an office?",
+      "in_scope": true,
+      "expected": [
+        "v2-T2.1"
+      ],
+      "top5": [
+        "v2-T2.1",
+        "v2-2.7",
+        "v2-2.6",
+        "v1-T3.1",
+        "v1-3.27"
+      ],
+      "hit_rank": 1,
+      "abstained": true,
+      "abstention_reason": "No answer sentence is supported, even partly, by its citations.",
+      "retrieval_strength": 0.9885,
+      "confidence": {
+        "retrieval_strength": 0.9885,
+        "faithfulness_rate": 0.0,
+        "consistency": 1.0,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.5965,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.99 (best reranker relevance of the evidence).",
+          "Faithfulness 0.00 (share of sentences entailed by their citations).",
+          "Self-consistency 1.00 (agreement across sampled answers).",
+          "Capped at Low: faithfulness 0.00 is below 0.50.",
+          "No answer given (No answer sentence is supported, even partly, by its citations.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 1.0,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 1.0
+      },
+      "answer": [],
+      "caveats": [
+        "Table text was extracted automatically and its layout may be imperfect; check the table in the official PDF."
+      ],
+      "latency_s": 8.13,
+      "latency_breakdown_ms": {
+        "retrieval": 419,
+        "generation": 6592,
+        "verification": 1098,
+        "consistency": 23,
+        "total": 8134
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q09",
+      "question": "How should the number of escape routes and exits from a room or storey be decided in a building other than a dwelling?",
+      "in_scope": true,
+      "expected": [
+        "v2-2.9",
+        "v2-2.3",
+        "v2-T2.2"
+      ],
+      "top5": [
+        "v2-2.9",
+        "v2-4.6",
+        "v2-2.3",
+        "v2-2.14",
+        "v2-2.16"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9992,
+      "confidence": {
+        "retrieval_strength": 0.9992,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.7223,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9164,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.72 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9378,
+        "citation_overlap": 0.6,
+        "abstention_agreement": 1.0,
+        "score": 0.7223
+      },
+      "answer": [
+        {
+          "sentence": "The number of escape routes and exits should be based on the number of occupants and travel distance limits to the nearest exit.",
+          "citations": [
+            "v2-2.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 2.3, p. 12]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-2.3",
+              "text": "The number of escape routes and exits that should be provided depends on both of the following.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9847,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-2.3": 0.9847
+          }
+        },
+        {
+          "sentence": "If the number of occupants is not known, appropriate floor space factors should be used to determine the design.",
+          "citations": [
+            "v2-2.9"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 2.9, p. 15]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-2.9",
+              "text": "The building design should be based on the number of occupants.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9806,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-2.9": 0.9806
+          }
+        },
+        {
+          "sentence": "Escape routes should be sited to ensure that travel distances do not exceed specified limits.",
+          "citations": [
+            "v2-4.6"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 4.6, p. 42]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-4.6",
+              "text": "Escape routes should be sited so that the travel distance from any point of a storey to the nearest storey exit does not exceed the distance given in Table 4.1.",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9861,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v2-4.6": 0.9861
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 16.46,
+      "latency_breakdown_ms": {
+        "retrieval": 273,
+        "generation": 15910,
+        "verification": 236,
+        "consistency": 36,
+        "total": 16456
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q10",
+      "question": "In what situations can a single escape stair serve a building other than a dwelling?",
+      "in_scope": true,
+      "expected": [
+        "v2-3.3"
+      ],
+      "top5": [
+        "v2-3.3",
+        "v2-4.7",
+        "v2-4.9",
+        "v2-3.41",
+        "v2-3.31"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9998,
+      "confidence": {
+        "retrieval_strength": 0.9998,
+        "faithfulness_rate": 0.7143,
+        "consistency": 0.9868,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.8817,
+        "label": "Medium",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.71 (share of sentences entailed by their citations).",
+          "Self-consistency 0.99 (agreement across sampled answers).",
+          "Capped at Medium: 2 sentence(s) unsupported by their citations."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9895,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9868
+      },
+      "answer": [
+        {
+          "sentence": "A single escape stair may serve a building when independent escape routes from areas in different purpose groups are not necessary.",
+          "citations": [
+            "v2-3.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.3, p. 28]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.3",
+              "text": "When independent escape routes from areas in different purpose groups are not necessary",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9878,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.3": 0.9878
+          }
+        },
+        {
+          "sentence": "A single escape stair can serve a basement that is allowed to have a single escape route.",
+          "citations": [
+            "v2-3.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.3, p. 28]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.3",
+              "text": "From a basement that is allowed to have a single escape route",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.992,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.3": 0.992
+          }
+        },
+        {
+          "sentence": "In small premises, a single escape stair may be used provided it meets specific conditions.",
+          "citations": [
+            "v2-4.7"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 4.7, p. 46]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-4.7",
+              "text": "A single escape stair may be used in small premises",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Unsupported",
+          "entailment": 0.0077,
+          "faithfulness_note": "Cited text does not entail this sentence.",
+          "citation_entailment": {
+            "v2-4.7": 0.0077
+          }
+        },
+        {
+          "sentence": "A single escape stair can serve a building with no storey more than 11m above ground level and allowed to have only a single escape route.",
+          "citations": [
+            "v2-3.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.3, p. 28]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.3",
+              "text": "It has no storey with a floor level more than 11m above ground level",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9879,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.3": 0.9879
+          }
+        },
+        {
+          "sentence": "An office building with a maximum of five storeys can have a single escape stair if travel distances are within specified limits.",
+          "citations": [
+            "v2-3.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.3, p. 28]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.3",
+              "text": "An office building with a maximum of five storeys above the ground storey",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9835,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.3": 0.9835
+          }
+        },
+        {
+          "sentence": "A factory may use a single escape stair if it is low risk with two storeys or normal risk with one storey, meeting travel distance criteria.",
+          "citations": [
+            "v2-3.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.3, p. 28]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.3",
+              "text": "For low risk buildings, two storeys above the ground storey",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Unsupported",
+          "entailment": 0.0165,
+          "faithfulness_note": "Cited text does not entail this sentence.",
+          "citation_entailment": {
+            "v2-3.3": 0.0165
+          }
+        },
+        {
+          "sentence": "Process plant buildings with a maximum of 10 people can have a single escape stair.",
+          "citations": [
+            "v2-3.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.3, p. 28]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.3",
+              "text": "Process plant buildings with a maximum of 10 people",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9907,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.3": 0.9907
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 25.83,
+      "latency_breakdown_ms": {
+        "retrieval": 368,
+        "generation": 22437,
+        "verification": 2858,
+        "consistency": 163,
+        "total": 25828
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q11",
+      "question": "What is a protected shaft?",
+      "in_scope": true,
+      "expected": [
+        "v2-8.6"
+      ],
+      "top5": [
+        "v1-7.21",
+        "v2-8.6",
+        "v2-8.36",
+        "v1-7.26",
+        "v2-8.38"
+      ],
+      "hit_rank": 2,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9987,
+      "confidence": {
+        "retrieval_strength": 0.9987,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.9703,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9907,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.97 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9763,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9703
+      },
+      "answer": [
+        {
+          "sentence": "A protected shaft is a structure that connects compartments and is designed to restrict the spread of fire between those compartments.",
+          "citations": [
+            "v1-7.21",
+            "v2-8.6"
+          ],
+          "citation_labels": [
+            "[Vol 1, B3, para 7.21, p. 62]",
+            "[Vol 2, B3, para 8.6, p. 65]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-7.21",
+              "text": "These are called protected shafts.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v2-8.6",
+              "text": "These are called protected shafts.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9944,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-7.21": 0.9942,
+            "v2-8.6": 0.9944
+          }
+        }
+      ],
+      "caveats": [
+        "The answer draws on both Volume 1 (dwellings) and Volume 2 (other buildings); check which volume applies to your building."
+      ],
+      "latency_s": 7.42,
+      "latency_breakdown_ms": {
+        "retrieval": 236,
+        "generation": 7098,
+        "verification": 64,
+        "consistency": 21,
+        "total": 7421
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q12",
+      "question": "What should all compartment walls and compartment floors achieve?",
+      "in_scope": true,
+      "expected": [
+        "v2-8.15"
+      ],
+      "top5": [
+        "v2-8.15",
+        "v1-7.5",
+        "v1-5.8",
+        "v1-5.11",
+        "v2-8.25"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9999,
+      "confidence": {
+        "retrieval_strength": 0.9999,
+        "faithfulness_rate": 0.75,
+        "consistency": 0.9995,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.8998,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.75 (share of sentences entailed by their citations).",
+          "Self-consistency 1.00 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 4,
+        "semantic_similarity": 0.9996,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9995
+      },
+      "answer": [
+        {
+          "sentence": "All compartment walls and compartment floors should form a complete barrier to fire between the compartments they separate.",
+          "citations": [
+            "v2-8.15",
+            "v1-7.5",
+            "v1-5.8"
+          ],
+          "citation_labels": [
+            "[Vol 2, B3, para 8.15, p. 69]",
+            "[Vol 1, B3, para 7.5, p. 60]",
+            "[Vol 1, B3, para 5.8, p. 52]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-8.15",
+              "text": "Form a complete barrier to fire between the compartments they separate.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-7.5",
+              "text": "Form a complete barrier to fire between the compartments they separate.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-5.8",
+              "text": "Form a complete barrier to fire between the compartments they separate.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9956,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-8.15": 0.9955,
+            "v1-7.5": 0.9956,
+            "v1-5.8": 0.9954
+          }
+        },
+        {
+          "sentence": "All compartment walls and compartment floors should have the appropriate fire resistance as given in Appendix B, Table B1 and Table B2.",
+          "citations": [
+            "v2-8.15",
+            "v1-7.5",
+            "v1-5.8"
+          ],
+          "citation_labels": [
+            "[Vol 2, B3, para 8.15, p. 69]",
+            "[Vol 1, B3, para 7.5, p. 60]",
+            "[Vol 1, B3, para 5.8, p. 52]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-8.15",
+              "text": "Have the appropriate fire resistance, as given in Appendix B, Table B1 and Table B2.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-7.5",
+              "text": "Have the appropriate fire resistance, as given in Appendix B, Table B1 and Table B2.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-5.8",
+              "text": "Have the appropriate fire resistance, as given in Appendix B, Table B1 and Table B2.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Partially supported",
+          "entailment": 0.3525,
+          "faithfulness_note": "Cited text only partly entails this sentence.",
+          "citation_entailment": {
+            "v2-8.15": 0.1504,
+            "v1-7.5": 0.2369,
+            "v1-5.8": 0.3525
+          }
+        }
+      ],
+      "caveats": [
+        "The answer draws on both Volume 1 (dwellings) and Volume 2 (other buildings); check which volume applies to your building."
+      ],
+      "latency_s": 14.45,
+      "latency_breakdown_ms": {
+        "retrieval": 231,
+        "generation": 13838,
+        "verification": 354,
+        "consistency": 28,
+        "total": 14453
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q13",
+      "question": "Why should cavity barriers be provided?",
+      "in_scope": true,
+      "expected": [
+        "v1-5.17",
+        "v2-9.2"
+      ],
+      "top5": [
+        "v1-8.2",
+        "v2-9.2",
+        "v1-5.17",
+        "v1-5.18",
+        "v1-8.3"
+      ],
+      "hit_rank": 2,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.8167,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9449,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.82 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 1.0,
+        "citation_overlap": 0.6333,
+        "abstention_agreement": 1.0,
+        "score": 0.8167
+      },
+      "answer": [
+        {
+          "sentence": "Cavity barriers should be provided to reduce the potential for fire spread.",
+          "citations": [
+            "v1-8.2",
+            "v2-9.2",
+            "v1-5.17",
+            "v1-5.18",
+            "v1-8.3",
+            "v2-9.3"
+          ],
+          "citation_labels": [
+            "[Vol 1, B3, para 8.2, p. 66]",
+            "[Vol 2, B3, para 9.2, p. 77]",
+            "[Vol 1, B3, para 5.17, p. 55]",
+            "[Vol 1, B3, para 5.18, p. 55]",
+            "[Vol 1, B3, para 8.3, p. 66]",
+            "[Vol 2, B3, para 9.3, p. 77]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v1-8.2",
+              "text": "To reduce the potential for fire spread, cavity barriers should be provided for both of the following.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v2-9.2",
+              "text": "To reduce the potential for fire spread, cavity barriers should be provided for both of the following.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-5.17",
+              "text": "To reduce the potential for fire spread, cavity barriers should be provided for both of the following.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9922,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v1-8.2": 0.9922,
+            "v2-9.2": 0.992,
+            "v1-5.17": 0.9914,
+            "v1-5.18": 0.9881,
+            "v1-8.3": 0.4458,
+            "v2-9.3": 0.3622
+          }
+        }
+      ],
+      "caveats": [
+        "The answer draws on both Volume 1 (dwellings) and Volume 2 (other buildings); check which volume applies to your building."
+      ],
+      "latency_s": 11.86,
+      "latency_breakdown_ms": {
+        "retrieval": 166,
+        "generation": 11141,
+        "verification": 530,
+        "consistency": 19,
+        "total": 11857
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q14",
+      "question": "What minimum fire resistance performance is sufficient to protect means of escape in buildings other than dwellings?",
+      "in_scope": true,
+      "expected": [
+        "v2-5.2"
+      ],
+      "top5": [
+        "v2-5.2",
+        "v2-D3.4",
+        "v2-5.3",
+        "v2-3.32",
+        "v2-pre-requirement-b1-means-of-~2"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9999,
+      "confidence": {
+        "retrieval_strength": 0.9999,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.9825,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9947,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.98 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.986,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9825
+      },
+      "answer": [
+        {
+          "sentence": "A minimum performance of REI 30 is sufficient to protect means of escape in buildings other than dwellings.",
+          "citations": [
+            "v2-5.2"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 5.2, p. 47]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-5.2",
+              "text": "a minimum performance of REI 30 is sufficient to protect means of escape.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.987,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-5.2": 0.987
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 6.02,
+      "latency_breakdown_ms": {
+        "retrieval": 267,
+        "generation": 5662,
+        "verification": 69,
+        "consistency": 17,
+        "total": 6017
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q15",
+      "question": "What criteria must a building designed for phased evacuation satisfy?",
+      "in_scope": true,
+      "expected": [
+        "v2-3.21"
+      ],
+      "top5": [
+        "v2-3.21",
+        "v2-3.19",
+        "v2-5.37",
+        "v2-3.20",
+        "v2-pre-section-3-design-for-ver"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9995,
+      "confidence": {
+        "retrieval_strength": 0.9995,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.9745,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9922,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.97 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9796,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9745
+      },
+      "answer": [
+        {
+          "sentence": "A building designed for phased evacuation must have stairs approached through a protected lobby or corridor at each storey except the top storey.",
+          "citations": [
+            "v2-3.21"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.21, p. 35]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.21",
+              "text": "At each storey except a top storey, stairs should be approached through a protected lobby or protected corridor.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9933,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.21": 0.9933
+          }
+        },
+        {
+          "sentence": "The building must have lifts approached through a protected lobby at each storey.",
+          "citations": [
+            "v2-3.21"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.21, p. 35]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.21",
+              "text": "At each storey, the lifts should be approached through a protected lobby.",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9931,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v2-3.21": 0.9931
+          }
+        },
+        {
+          "sentence": "Every floor in the building should be a compartment floor, with REI depending on the height and use of the building.",
+          "citations": [
+            "v2-3.21"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.21, p. 35]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.21",
+              "text": "Every floor should be a compartment floor (REI depending on height and use of the building).",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9869,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.21": 0.9869
+          }
+        },
+        {
+          "sentence": "If the building has a storey over 30m above ground level, it must be protected throughout by an automatic sprinkler system.",
+          "citations": [
+            "v2-3.21"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.21, p. 35]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.21",
+              "text": "If there is a storey over 30m above ground level, the building should be protected throughout by an automatic sprinkler system.",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9943,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v2-3.21": 0.9943
+          }
+        },
+        {
+          "sentence": "The building must be fitted with a fire warning system conforming to at least the L3 standard given in BS 5839-1.",
+          "citations": [
+            "v2-3.21"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.21, p. 35]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.21",
+              "text": "The building should be fitted with an appropriate fire warning system conforming to at least the L3 standard given in BS 5839-1.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9915,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.21": 0.9915
+          }
+        },
+        {
+          "sentence": "An internal speech communication system must provide communication between a control point and a fire warden on every storey.",
+          "citations": [
+            "v2-3.21"
+          ],
+          "citation_labels": [
+            "[Vol 2, B1, para 3.21, p. 35]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-3.21",
+              "text": "An internal speech communication system should provide communication between a control point at fire and rescue service access level and a fire warden on every storey.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9817,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-3.21": 0.9817
+          }
+        }
+      ],
+      "caveats": [],
+      "latency_s": 21.55,
+      "latency_breakdown_ms": {
+        "retrieval": 403,
+        "generation": 19220,
+        "verification": 1845,
+        "consistency": 82,
+        "total": 21551
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q16",
+      "question": "For a small building without fire mains, what vehicle access for a pump appliance is needed?",
+      "in_scope": true,
+      "expected": [
+        "v2-15.1",
+        "v2-T15.1"
+      ],
+      "top5": [
+        "v2-15.1",
+        "v2-15.5",
+        "v1-13.6",
+        "v2-15.4",
+        "v1-13.5"
+      ],
+      "hit_rank": 1,
+      "abstained": true,
+      "abstention_reason": "No answer sentence is supported, even partly, by its citations.",
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": 0.0,
+        "consistency": 0.9764,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.5928,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.98 (agreement across sampled answers).",
+          "Capped at Low: faithfulness 0.00 is below 0.50.",
+          "No answer given (No answer sentence is supported, even partly, by its citations.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9811,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9764
+      },
+      "answer": [],
+      "caveats": [],
+      "latency_s": 6.67,
+      "latency_breakdown_ms": {
+        "retrieval": 214,
+        "generation": 6328,
+        "verification": 98,
+        "consistency": 33,
+        "total": 6674
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q17",
+      "question": "When does a building need firefighting shafts containing a firefighting lift?",
+      "in_scope": true,
+      "expected": [
+        "v2-17.2",
+        "v1-15.2"
+      ],
+      "top5": [
+        "v2-17.2",
+        "v1-15.2",
+        "v2-17.6",
+        "v1-15.3",
+        "v2-17.3"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.9988,
+      "confidence": {
+        "retrieval_strength": 0.9988,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.8418,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9522,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.84 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9934,
+        "citation_overlap": 0.7,
+        "abstention_agreement": 1.0,
+        "score": 0.8418
+      },
+      "answer": [
+        {
+          "sentence": "A building with a storey more than 18m above the fire and rescue service vehicle access level should have one or more firefighting shafts containing a firefighting lift.",
+          "citations": [
+            "v2-17.2",
+            "v1-15.2"
+          ],
+          "citation_labels": [
+            "[Vol 2, B5, para 17.2, p. 119]",
+            "[Vol 1, B5, para 15.2, p. 103]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-17.2",
+              "text": "A building with a storey more than 18m above the fire and rescue service vehicle access level should have one or more firefighting shafts containing a firefighting lift.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-15.2",
+              "text": "A building with a storey more than 18m above the fire and rescue service vehicle access level should have one or more firefighting shafts, each containing a firefighting lift.",
+              "verbatim": false
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.9967,
+          "faithfulness_note": "A quote was not found verbatim in its cited passage.",
+          "citation_entailment": {
+            "v2-17.2": 0.0026,
+            "v1-15.2": 0.9967
+          }
+        },
+        {
+          "sentence": "A building with basement storeys more than 10m below the fire and rescue service vehicle access level should have firefighting shafts containing firefighting lifts.",
+          "citations": [
+            "v2-17.3",
+            "v1-15.3"
+          ],
+          "citation_labels": [
+            "[Vol 2, B5, para 17.3, p. 119]",
+            "[Vol 1, B5, para 15.3, p. 106]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-17.3",
+              "text": "There is a basement more than 10m below the fire and rescue service vehicle access level. The firefighting shafts should contain firefighting lifts.",
+              "verbatim": true
+            },
+            {
+              "chunk_id": "v1-15.3",
+              "text": "There is a basement more than 10m below the fire and rescue service vehicle access level. The firefighting shafts should contain firefighting lifts.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.978,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-17.3": 0.978,
+            "v1-15.3": 0.9662
+          }
+        }
+      ],
+      "caveats": [
+        "The answer draws on both Volume 1 (dwellings) and Volume 2 (other buildings); check which volume applies to your building."
+      ],
+      "latency_s": 17.08,
+      "latency_breakdown_ms": {
+        "retrieval": 269,
+        "generation": 16008,
+        "verification": 759,
+        "consistency": 44,
+        "total": 17082
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q18",
+      "question": "How close to a dwellinghouse must access for a pumping appliance be provided?",
+      "in_scope": true,
+      "expected": [
+        "v1-13.1"
+      ],
+      "top5": [
+        "v1-13.1",
+        "v1-13.5",
+        "v2-15.4",
+        "v1-13.2",
+        "v2-15.1"
+      ],
+      "hit_rank": 1,
+      "abstained": true,
+      "abstention_reason": "No answer sentence is supported, even partly, by its citations.",
+      "retrieval_strength": 0.9997,
+      "confidence": {
+        "retrieval_strength": 0.9997,
+        "faithfulness_rate": 0.0,
+        "consistency": 0.9966,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.5989,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.00 (share of sentences entailed by their citations).",
+          "Self-consistency 1.00 (agreement across sampled answers).",
+          "Capped at Low: faithfulness 0.00 is below 0.50.",
+          "No answer given (No answer sentence is supported, even partly, by its citations.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9973,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9966
+      },
+      "answer": [],
+      "caveats": [],
+      "latency_s": 6.79,
+      "latency_breakdown_ms": {
+        "retrieval": 382,
+        "generation": 6300,
+        "verification": 78,
+        "consistency": 32,
+        "total": 6794
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q19",
+      "question": "In a dwelling building with a storey 18m or more in height, what class must insulation products in the external wall achieve?",
+      "in_scope": true,
+      "expected": [
+        "v1-10.6"
+      ],
+      "top5": [
+        "v1-10.6",
+        "v2-12.6",
+        "v1-10.7",
+        "v2-12.7",
+        "v2-12.15"
+      ],
+      "hit_rank": 1,
+      "abstained": true,
+      "abstention_reason": "No answer sentence is supported, even partly, by its citations.",
+      "retrieval_strength": 0.9989,
+      "confidence": {
+        "retrieval_strength": 0.9989,
+        "faithfulness_rate": 0.0,
+        "consistency": 0.9786,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.5933,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 0.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.98 (agreement across sampled answers).",
+          "Capped at Low: faithfulness 0.00 is below 0.50.",
+          "No answer given (No answer sentence is supported, even partly, by its citations.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9829,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9786
+      },
+      "answer": [],
+      "caveats": [],
+      "latency_s": 8.01,
+      "latency_breakdown_ms": {
+        "retrieval": 431,
+        "generation": 7450,
+        "verification": 104,
+        "consistency": 25,
+        "total": 8012
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "q20",
+      "question": "Why are smoke outlets provided from basements?",
+      "in_scope": true,
+      "expected": [
+        "v2-18.1"
+      ],
+      "top5": [
+        "v2-18.1",
+        "v1-16.1",
+        "v2-18.2",
+        "v2-18.3",
+        "v1-16.2"
+      ],
+      "hit_rank": 1,
+      "abstained": false,
+      "abstention_reason": null,
+      "retrieval_strength": 0.999,
+      "confidence": {
+        "retrieval_strength": 0.999,
+        "faithfulness_rate": 1.0,
+        "consistency": 0.9176,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.975,
+        "label": "High",
+        "reasons": [
+          "Retrieval strength 1.00 (best reranker relevance of the evidence).",
+          "Faithfulness 1.00 (share of sentences entailed by their citations).",
+          "Self-consistency 0.92 (agreement across sampled answers)."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 0.9341,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 0.9176
+      },
+      "answer": [
+        {
+          "sentence": "Smoke outlets are provided to allow heat and smoke to escape from basement levels to the open air, improving access for firefighting personnel.",
+          "citations": [
+            "v2-18.1",
+            "v1-16.1"
+          ],
+          "citation_labels": [
+            "[Vol 2, B5, para 18.1, p. 123]",
+            "[Vol 1, B5, para 16.1, p. 109]"
+          ],
+          "invalid_citations": [],
+          "quotes": [
+            {
+              "chunk_id": "v2-18.1",
+              "text": "allow heat and smoke to escape from the basement levels to the open air.",
+              "verbatim": true
+            }
+          ],
+          "faithfulness": "Supported",
+          "entailment": 0.946,
+          "faithfulness_note": "",
+          "citation_entailment": {
+            "v2-18.1": 0.946,
+            "v1-16.1": 0.9382
+          }
+        }
+      ],
+      "caveats": [
+        "The answer draws on both Volume 1 (dwellings) and Volume 2 (other buildings); check which volume applies to your building."
+      ],
+      "latency_s": 11.77,
+      "latency_breakdown_ms": {
+        "retrieval": 118,
+        "generation": 11515,
+        "verification": 99,
+        "consistency": 31,
+        "total": 11765
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "x01",
+      "question": "What size of electrical cable should I use for a cooker circuit?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v1-3.51",
+        "v2-5.30",
+        "v1-3.50",
+        "v2-5.29",
+        "v2-10.4"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "Best passage relevance 0.00 is below the threshold 0.10; the question looks out of scope.",
+      "retrieval_strength": 0.0002,
+      "confidence": {
+        "retrieval_strength": 0.0002,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.0002,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.00 (best reranker relevance of the evidence).",
+          "Self-consistency not measured; weights re-normalised over the other signals.",
+          "No answer given (Best passage relevance 0.00 is below the threshold 0.10; the question looks out of scope.); signals shown for audit only."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.42,
+      "latency_breakdown_ms": {
+        "retrieval": 418,
+        "total": 419
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "x02",
+      "question": "Do I need planning permission for a loft conversion?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v1-2.23",
+        "v1-2.21",
+        "v1-2.22",
+        "v1-5.4",
+        "v1-E2"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "The model judged the evidence insufficient.",
+      "retrieval_strength": 0.1668,
+      "confidence": {
+        "retrieval_strength": 0.1668,
+        "faithfulness_rate": null,
+        "consistency": 1.0,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.5834,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.17 (best reranker relevance of the evidence).",
+          "Self-consistency 1.00 (agreement across sampled answers).",
+          "No answer given (The model judged the evidence insufficient.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 1.0,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 1.0
+      },
+      "answer": [],
+      "caveats": [
+        "The evidence provided does not address planning permission requirements for loft conversions. It focuses on fire safety measures and regulations."
+      ],
+      "latency_s": 3.83,
+      "latency_breakdown_ms": {
+        "retrieval": 240,
+        "generation": 3563,
+        "verification": 0,
+        "consistency": 23,
+        "total": 3827
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "x03",
+      "question": "What U-value must a new external wall achieve for thermal insulation?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v2-12.22",
+        "v1-10.21",
+        "v2-12.11",
+        "v1-10.3",
+        "v1-10.10"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "The model judged the evidence insufficient.",
+      "retrieval_strength": 0.8254,
+      "confidence": {
+        "retrieval_strength": 0.8254,
+        "faithfulness_rate": null,
+        "consistency": 1.0,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.9127,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.83 (best reranker relevance of the evidence).",
+          "Self-consistency 1.00 (agreement across sampled answers).",
+          "Capped at Medium: faithfulness below 0.75 (e.g. table look-ups that NLI cannot fully verify).",
+          "No answer given (The model judged the evidence insufficient.); signals shown for audit only."
+        ]
+      },
+      "consistency": {
+        "n_samples": 5,
+        "semantic_similarity": 1.0,
+        "citation_overlap": 1.0,
+        "abstention_agreement": 1.0,
+        "score": 1.0
+      },
+      "answer": [],
+      "caveats": [
+        "The provided evidence does not specify U-value requirements for thermal insulation of new external walls."
+      ],
+      "latency_s": 4.47,
+      "latency_breakdown_ms": {
+        "retrieval": 384,
+        "generation": 4071,
+        "verification": 0,
+        "consistency": 16,
+        "total": 4473
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "x04",
+      "question": "How many accessible parking spaces does a new office building need?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v2-pre-section-3-design-for-ver",
+        "v2-TD1",
+        "v1-TD1",
+        "v2-15.3",
+        "v2-3.18-w1"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "Best passage relevance 0.03 is below the threshold 0.10; the question looks out of scope.",
+      "retrieval_strength": 0.0253,
+      "confidence": {
+        "retrieval_strength": 0.0253,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.0253,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.03 (best reranker relevance of the evidence).",
+          "Self-consistency not measured; weights re-normalised over the other signals.",
+          "No answer given (Best passage relevance 0.03 is below the threshold 0.10; the question looks out of scope.); signals shown for audit only."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.41,
+      "latency_breakdown_ms": {
+        "retrieval": 408,
+        "total": 408
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    },
+    {
+      "id": "x05",
+      "question": "What gas safety checks are required when installing a boiler?",
+      "in_scope": false,
+      "expected": [],
+      "top5": [
+        "v2-8.37",
+        "v1-7.27",
+        "v2-3.39",
+        "v1-3.83",
+        "v1-pre-appendix-g-documents-ref"
+      ],
+      "hit_rank": null,
+      "abstained": true,
+      "abstention_reason": "Best passage relevance 0.01 is below the threshold 0.10; the question looks out of scope.",
+      "retrieval_strength": 0.0089,
+      "confidence": {
+        "retrieval_strength": 0.0089,
+        "faithfulness_rate": null,
+        "consistency": null,
+        "weights": {
+          "retrieval": 0.3,
+          "faithfulness": 0.4,
+          "consistency": 0.3
+        },
+        "overall": 0.0089,
+        "label": "n/a",
+        "reasons": [
+          "Retrieval strength 0.01 (best reranker relevance of the evidence).",
+          "Self-consistency not measured; weights re-normalised over the other signals.",
+          "No answer given (Best passage relevance 0.01 is below the threshold 0.10; the question looks out of scope.); signals shown for audit only."
+        ]
+      },
+      "consistency": null,
+      "answer": [],
+      "caveats": [],
+      "latency_s": 0.12,
+      "latency_breakdown_ms": {
+        "retrieval": 123,
+        "total": 123
+      },
+      "prompt_version": "grounded-v2",
+      "model": "gpt-4o-mini"
+    }
+  ]
+}

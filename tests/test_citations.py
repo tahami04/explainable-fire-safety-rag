@@ -94,4 +94,5 @@ def test_premise_prefix_is_passed_to_scorer():
         return entail_all(pairs)
 
     check_sentence("x", ["v2-8.6"], EVIDENCE, spy, 0.5, 0.15, premise_prefix={"v2-8.6": "In Volume 2: "})
-    assert all(p.startswith("In Volume 2: ") for p, _ in seen)
+    assert any(p.startswith("In Volume 2: ") for p, _ in seen)
+    assert any(not p.startswith("In Volume 2: ") for p, _ in seen)

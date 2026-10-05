@@ -99,3 +99,13 @@ def test_abstention_has_no_confidence_label(settings, retriever):
     payload = {**GOOD, "answer": [], "abstained": True}
     r = _pipeline(settings, retriever, FakeLLM(payload)).ask("What about shafts in compartments?")
     assert r.confidence.label == "n/a"
+
+
+def test_record_and_replay_roundtrip(tmp_path):
+    from firerag.generate.providers import RecordingProvider, ReplayProvider
+
+    path = tmp_path / "calls.jsonl"
+    rec = RecordingProvider(FakeLLM(GOOD), path)
+    msgs = [{"role": "user", "content": "q"}]
+    first = rec.complete(msgs, 0.7, n=3)
+    assert ReplayProvider(path, "fake", "scripted").complete(msgs, 0.7, n=3) == first

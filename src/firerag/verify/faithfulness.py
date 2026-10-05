@@ -90,9 +90,10 @@ def check_sentence(
     """Label one sentence as Supported / Partially supported / Unsupported.
 
     ``premise_prefix`` maps chunk_id to a provenance statement (volume, section,
-    paragraph) prepended to every window. Without it, NLI rejects true sentences
-    such as "In Volume 1, blocks of flats … should be fitted with sprinklers"
-    because the passage text alone never says which volume it is from.
+    paragraph). Each window is scored both with and without it and the best
+    entailment is kept: without the prefix NLI rejects true sentences such as
+    "In Volume 1, blocks of flats … should be fitted with sprinklers" (the passage
+    never says which volume it is from); with it, some plain restatements score lower.
     """
     sentence = clean_hypothesis(sentence)
     premise_prefix = premise_prefix or {}
@@ -107,9 +108,14 @@ def check_sentence(
         )
     pairs, owners = [], []
     for cid in cited:
+        prefix = premise_prefix.get(cid, "")
         for w in split_windows(evidence_text[cid]):
-            pairs.append((premise_prefix.get(cid, "") + w, sentence))
-            owners.append(cid)
+            # Score each window with and without the provenance prefix and keep the best:
+            # the prefix rescues sentences that name the volume/section, but on eval q01 it
+            # cut a verbatim restatement from 0.78 to 0.05. Extra context should only help.
+            for premise in dict.fromkeys((w, prefix + w)):
+                pairs.append((premise, sentence))
+                owners.append(cid)
     probs = _softmax(scorer(pairs))
     ent, con = probs[:, NLI_LABELS.index("entailment")], probs[:, NLI_LABELS.index("contradiction")]
     per_cit: dict[str, float] = {}

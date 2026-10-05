@@ -7,6 +7,9 @@ single implementation serves both.
 
 from __future__ import annotations
 
+import hashlib
+import json
+from pathlib import Path
 from typing import Protocol
 
 from openai import BadRequestError
@@ -88,3 +91,48 @@ def get_provider(settings: Settings) -> LLMProvider | None:
             supports_n=False,
         )
     return None
+
+
+def _call_key(model: str, messages: list[dict[str, str]], temperature: float, n: int) -> str:
+    payload = json.dumps({"m": model, "msgs": messages, "t": temperature, "n": n}, sort_keys=True)
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+
+class RecordingProvider:
+    """Wraps a provider and appends every call's outputs to a JSONL file.
+
+    Used by the evaluation so that changes to the verification layer can be
+    re-scored later against the exact same generations, with no API calls.
+    """
+
+    def __init__(self, inner: LLMProvider, path: Path) -> None:
+        """Record calls made through ``inner`` to ``path``."""
+        self.inner, self.path = inner, path
+        self.name, self.model = inner.name, inner.model
+
+    def complete(self, messages: list[dict[str, str]], temperature: float, n: int = 1) -> list[str]:
+        """Call the wrapped provider and record the outputs."""
+        out = self.inner.complete(messages, temperature, n)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open("a") as fh:
+            fh.write(json.dumps({"key": _call_key(self.model, messages, temperature, n), "outputs": out}) + "\n")
+        return out
+
+
+class ReplayProvider:
+    """Serves previously recorded outputs; raises if a call was never recorded."""
+
+    def __init__(self, path: Path, name: str, model: str) -> None:
+        """Load recordings from ``path`` for ``model``."""
+        self.name, self.model = name, model
+        self._calls: dict[str, list[str]] = {}
+        for line in path.read_text().splitlines():
+            rec = json.loads(line)
+            self._calls[rec["key"]] = rec["outputs"]
+
+    def complete(self, messages: list[dict[str, str]], temperature: float, n: int = 1) -> list[str]:
+        """Return the recorded outputs for this exact call."""
+        key = _call_key(self.model, messages, temperature, n)
+        if key not in self._calls:
+            raise KeyError("No recorded LLM output for this call (prompt, evidence or settings changed).")
+        return self._calls[key]

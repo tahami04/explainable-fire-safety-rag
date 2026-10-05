@@ -4,6 +4,7 @@ Usage:
     python eval/run_eval.py --mode retrieval   # no API key needed
     python eval/run_eval.py --mode full        # needs an LLM provider configured in .env
     Add --fresh to discard cached per-question results (they let a rate-limited run resume).
+    python eval/run_eval.py --mode full --replay   # re-verify recorded generations, no API calls
 
 Metric definitions (also written into the results file):
 
@@ -38,6 +39,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from firerag.config import get_settings  # noqa: E402
+from firerag.generate.providers import RecordingProvider, ReplayProvider  # noqa: E402
 from firerag.pipeline import AskResult, Pipeline  # noqa: E402
 
 
@@ -54,14 +56,24 @@ def _cache_path(mode: str, model: str | None) -> Path:
     return ROOT / "eval" / "results" / f".cache_{mode}_{(model or 'none').replace('/', '_')}.jsonl"
 
 
-def evaluate(mode: str, n_samples: int | None, fresh: bool = False) -> dict:
+def evaluate(mode: str, n_samples: int | None, fresh: bool = False, replay: bool = False) -> dict:
     """Run every question and compute aggregate metrics."""
     s = get_settings()
     qs = yaml.safe_load((ROOT / "eval" / "questions.yaml").read_text())
     pipe = Pipeline(audit=False)
     run_mode = "full" if mode == "full" else "retrieval_only"
-    if run_mode == "full" and pipe.provider is None:
+    if run_mode == "full" and pipe.provider is None and not replay:
         raise SystemExit("Full mode needs an LLM provider: set OPENAI_API_KEY (or LLM_PROVIDER=ollama) in .env")
+    if run_mode == "full":
+        # Every LLM call is recorded so the verification layer can be re-evaluated
+        # later against identical generations (--replay), at no API cost.
+        name = pipe.provider.name if pipe.provider else s.llm_provider
+        model_name = pipe.provider.model if pipe.provider else s.openai_model
+        rec_path = ROOT / "eval" / "results" / f"llm_calls_{model_name}.jsonl"
+        if replay:
+            pipe.provider = ReplayProvider(rec_path, name, model_name)
+        else:
+            pipe.provider = RecordingProvider(pipe.provider, rec_path)
     pipe.ask("warm-up: protected shafts", mode="retrieval_only")  # load models before timing
 
     # Per-question results are cached as they complete so a run interrupted by an API
@@ -216,8 +228,9 @@ def main() -> None:
     ap.add_argument("--mode", choices=["retrieval", "full"], default="retrieval")
     ap.add_argument("--samples", type=int, default=None, help="Override self-consistency samples (full mode).")
     ap.add_argument("--fresh", action="store_true", help="Ignore cached per-question results.")
+    ap.add_argument("--replay", action="store_true", help="Re-verify recorded LLM outputs; no API calls.")
     args = ap.parse_args()
-    out = evaluate(args.mode, args.samples, fresh=args.fresh)
+    out = evaluate(args.mode, args.samples, fresh=args.fresh or args.replay, replay=args.replay)
     path = ROOT / "eval" / "results" / f"{args.mode}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(out, indent=2, ensure_ascii=False))
