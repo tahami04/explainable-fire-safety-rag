@@ -96,3 +96,24 @@ def test_premise_prefix_is_passed_to_scorer():
     check_sentence("x", ["v2-8.6"], EVIDENCE, spy, 0.5, 0.15, premise_prefix={"v2-8.6": "In Volume 2: "})
     assert any(p.startswith("In Volume 2: ") for p, _ in seen)
     assert any(not p.startswith("In Volume 2: ") for p, _ in seen)
+
+
+def test_list_items_are_paired_with_their_lead_in():
+    from firerag.verify.faithfulness import split_windows
+
+    text = (
+        "Flats should be served by more than one common stair if either of the following applies.\n"
+        "a. The flat is on a storey that does not meet the criteria for a single escape route.\n"
+        "b. The building has a top storey of 18m or more in height."
+    )
+    assert (
+        "Flats should be served by more than one common stair if either of the following applies. "
+        "b. The building has a top storey of 18m or more in height."
+    ) in split_windows(text)
+
+
+def test_numeric_guard_rejects_changed_numbers_even_if_nli_entails():
+    f = check_sentence("Offices allow 90m of travel.", ["v2-T2.1"], EVIDENCE, entail_all, 0.5, 0.15)
+    assert f.label == "Unsupported" and "90" in f.note
+    ok = check_sentence("Offices allow 18m of travel.", ["v2-T2.1"], EVIDENCE, entail_all, 0.5, 0.15)
+    assert ok.label == "Supported"

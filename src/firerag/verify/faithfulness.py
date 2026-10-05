@@ -60,12 +60,42 @@ def premise_prefix_for(volume: int, context: str, kind: str, ref: str | None) ->
     return f"In Approved Document B {context}{where}: "
 
 
+_LIST_ITEM = re.compile(r"^(?:[a-z]|[ivx]{1,4})\.\s")
+
+
 def split_windows(text: str, size: int = 3) -> list[str]:
-    """Overlapping windows of ``size`` sentences/list items (stride 1)."""
+    """Premise windows for NLI.
+
+    1. Overlapping windows of 1 to ``size`` sentences/list items (stride 1).
+    2. List-aware windows: Approved Document B states most conditions as a lead-in
+       ("... if either of the following applies.") followed by lettered items. NLI
+       cannot link item "b." back to its lead-in when they sit apart, so each item
+       (with its sub-items) is also paired directly with the sentence introducing it.
+    """
     parts = [p.strip() for p in re.split(r"(?<=[.;:])\s+|\n+", text) if p.strip()]
-    if len(parts) <= size:
-        return [" ".join(parts)] if parts else [text]
-    return [" ".join(parts[i : i + size]) for i in range(len(parts) - size + 1)]
+    if not parts:
+        return [text]
+    # Windows of 1..size sentences. Single sentences matter: the NLI model labels a
+    # sentence vs itself as entailment, but adding one unrelated sentence to the
+    # premise flips it to "neutral" (found on eval q18).
+    windows = [" ".join(parts[i : i + k]) for k in range(1, size + 1) for i in range(max(len(parts) - k + 1, 1))]
+
+    lines = [ln.strip() for ln in text.split("\n") if ln.strip()]
+    stem: str | None = None
+    for i, line in enumerate(lines):
+        if not _LIST_ITEM.match(line):
+            stem = line
+            continue
+        if stem is None or not re.match(r"^[a-z]\.\s", line):
+            continue  # roman sub-items are attached to their parent below
+        item = [line]
+        for nxt in lines[i + 1 :]:
+            if re.match(r"^[ivx]{1,4}\.\s", nxt):
+                item.append(nxt)
+            else:
+                break
+        windows.append(f"{stem} {' '.join(item)}")
+    return list(dict.fromkeys(windows))
 
 
 def default_scorer() -> NLIScorer:
@@ -133,6 +163,16 @@ def check_sentence(
         label, note = "Unsupported", "Cited text does not entail this sentence."
     if c_best > 0.5 and label != "Supported":
         note = "Cited text appears to contradict this sentence."
+
+    # Deterministic numeric guard. NLI is weak with numbers: in an offline perturbation
+    # test it accepted 23% of sentences whose numbers had been doubled ("1100mm" →
+    # "2200mm"). In fire-safety guidance the numbers are the guidance, so any number
+    # absent from the cited passages (including their provenance) makes the sentence
+    # Unsupported, whatever NLI says.
+    missing = missing_numbers(sentence, [premise_prefix.get(c, "") + evidence_text[c] for c in cited])
+    if missing:
+        label = "Unsupported"
+        note = f"Number(s) not found in the cited passages: {', '.join(missing)}."
     return SentenceFaithfulness(
         label=label,
         entailment=round(e_best, 4),
@@ -144,6 +184,13 @@ def check_sentence(
 
 
 _NUMBER = re.compile(r"\d+(?:\.\d+)?")
+
+
+def missing_numbers(sentence: str, passages: list[str]) -> list[str]:
+    """Numbers in ``sentence`` that appear in none of ``passages`` (thousands separators ignored)."""
+    norm = [p.replace(",", "") for p in passages]
+    found = {n for p in norm for n in _NUMBER.findall(p)}
+    return [n for n in dict.fromkeys(_NUMBER.findall(sentence.replace(",", ""))) if n not in found]
 
 
 def numbers_grounded(sentence: str, passage: str) -> bool:
