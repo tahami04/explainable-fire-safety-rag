@@ -1,0 +1,42 @@
+{
+  "source": "full.json",
+  "summary": {
+    "original": {
+      "n": 43,
+      "labelled_supported": 0.907,
+      "labelled_supported_or_partial": 1.0
+    },
+    "number swap": {
+      "n": 25,
+      "labelled_supported": 0.0,
+      "labelled_supported_or_partial": 0.0
+    },
+    "negation": {
+      "n": 41,
+      "labelled_supported": 0.098,
+      "labelled_supported_or_partial": 0.22
+    }
+  },
+  "false_acceptance_examples": [
+    {
+      "kind": "negation",
+      "variant": "The bottom of the openable area must not be no more than 1100 millimeters above the floor.",
+      "label": "Supported"
+    },
+    {
+      "kind": "negation",
+      "variant": "Flats should not also be served by more than one common stair if the building has a top storey of 18m or more in height.",
+      "label": "Supported"
+    },
+    {
+      "kind": "negation",
+      "variant": "A single escape stair may not serve a building with no storey more than 11m above ground level and allowed only a single escape route per storey as per paragraph 2.6b and Table 2.1.",
+      "label": "Supported"
+    },
+    {
+      "kind": "negation",
+      "variant": "A building with a basement more than 10m below the fire and rescue service vehicle access level should not have firefighting shafts containing firefighting lifts.",
+      "label": "Supported"
+    }
+  ]
+}
